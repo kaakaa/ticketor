@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <title>hogehoge</title>
+  <title>TracTicketor</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="/css/jquery-ui.min.css">
