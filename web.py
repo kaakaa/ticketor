@@ -1,10 +1,11 @@
 import trac
 import json
 import urllib2
-from bottle import route, run, static_file, template, request, HTTPResponse
+from bottle import default_app, route, run, static_file, template, request, HTTPResponse
 
-trac = trac.Trac()
-members = ['admin', 'guest']
+app = default_app()
+
+trac_server = trac.Trac()
 
 def make_params(forms):
     title = forms.get('title')
@@ -40,7 +41,6 @@ def format_response(response):
 
 def create_master_ticket(trac, forms):
     json_params = make_params(forms)
-    print json_params
     response = trac.callrpc(json_params)
     return format_response(response)
 
@@ -49,7 +49,7 @@ def create_slave_ticket(forms, parent_id, member):
     json_params['params'][2]['parents'] = str(parent_id)
     json_params['params'][2]['reporter'] = member
     
-    response = trac.callrpc(json_params)
+    response = trac_server.callrpc(json_params)
     return format_response(response)
 
 @route('/js/<filename>')
@@ -72,7 +72,7 @@ def fonts_static(filename):
 
 @route('/form')
 def index():
-    return template('form', milestones=trac.get_milestones(), components=trac.get_components())
+    return template('form', milestones=trac_server.get_milestones(), components=trac_server.get_components())
 
 @route('/tasks')
 def tasks():
@@ -81,9 +81,9 @@ def tasks():
 @route('/regist', method='post')
 def regist():
     try:
-        ticket_id = create_master_ticket(trac, request.forms)
+        ticket_id = create_master_ticket(trac_server, request.forms)
         
-        for m in members:
+        for m in ['admin', 'guest']:
             ticket_id2 = create_slave_ticket(request.forms, ticket_id, m)
             print ticket_id2        
         
@@ -92,4 +92,18 @@ def regist():
     except urllib2.URLError, e:
         return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
 
-run(host='localhost', port=8081, reloader=True)
+def convert_keys_to_string(dictionary):
+    """Recursively converts dictionary keys to strings."""
+    if not isinstance(dictionary, dict):
+        return dictionary
+    return dict((str(k), convert_keys_to_string(v)) 
+        for k, v in dictionary.items())
+
+def initialize():
+    with open('./conf/config.json') as fp:
+        app.config.load_dict(convert_keys_to_string(json.load(fp)))
+    trac_server.initialize(app)
+
+if __name__ == '__main__':
+    initialize()
+    run(host='localhost', port=8081, reloader=True)

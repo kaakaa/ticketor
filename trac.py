@@ -11,13 +11,19 @@ class Trac:
 	
 	milestones = []
 	components = []
-	
-	def __init__(self, host = 'localhost', port = '8080', project_name = 'SampleProject'):
-		self.host = host
-		self.port = port
-		self.project_name = project_name
 
-		self.install_auth('admin', 'admin')
+	members = ['admin', 'guest']
+
+	def initialize(self, app):
+		self.host = app.config['trac.host'] if app.config.has_key('trac.host') else 'localhost'
+		self.port = app.config['trac.port'] if app.config.has_key('trac.port') else '8080'
+		self.project_name = app.config['trac.project_name'] if app.config.has_key('trac.project_name') else 'SampleProject'
+		self.members = app.config['trac.team_members'] if app.config.has_key('trac.team_members') else ['admin']
+
+		u = app.config['trac.rpc.username'] if app.config.has_key('trac.rpc.username') else 'admin'
+		p = app.config['trac.rpc.password'] if app.config.has_key('trac.rpc.password') else 'admin'
+		self.install_auth(u, p)
+		
 		self.milestones = self.read_milestones()
 		self.components = self.read_components()
 
@@ -36,6 +42,7 @@ class Trac:
 		opener = urllib2.build_opener(authhandler)
 		
 		urllib2.install_opener(opener)
+
 
 	def callrpc(self, json_params):
 		req = urllib2.Request("http://%s:%s/trac/%s/%s" % (self.host, self.port, self.project_name, self.jsonrpc_path))

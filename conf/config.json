@@ -1,0 +1,14 @@
+{
+	"trac":
+	{
+		"host": "localhost",
+		"port": "8080",
+		"project_name": "SampleProject",
+		"team_menbers": ["admin", "guest"],
+		"rpc":
+		{
+			"username": "admin",
+			"password": "admin"
+		}
+	}
+}
