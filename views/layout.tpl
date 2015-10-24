@@ -1,8 +1,12 @@
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
   <title>hogehoge</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="/css/jquery-ui.min.css">
+  <link rel="stylesheet" href="/css/jquery-ui.structure.min.css">
+  <link rel="stylesheet" href="/css/jquery-ui.theme.min.css">
 </head>
 <body>
   <div class="container">
@@ -43,11 +47,15 @@
     
   </div>
   <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/js/bootstrap.min.js"></script>
   <script type="text/javascript">
     $(function(){
       $('#desc').val('== 概要 == \r\n\r\n\r\n== 前提条件 == \r\n\r\n\r\n== 完了条件 ==');
-	  $('#nav-{{page}}').addClass('active');
+      $('#nav-{{page}}').addClass('active');
+      
+      $("#due_assign").datepicker({dateFormat: 'yy/mm/dd'});
+      $("#due_close").datepicker({dateFormat: 'yy/mm/dd'});
     });
   </script>
 </body>

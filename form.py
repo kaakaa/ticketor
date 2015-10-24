@@ -11,7 +11,7 @@ def make_params(forms):
     desc = forms.get('desc')
     point = forms.get('point')
     milestone = forms.get('milestone')
-    due_start = forms.get('due_start')
+    due_assign = forms.get('due_assign')
     due_close = forms.get('due_close')
     
     return {
@@ -22,7 +22,7 @@ def make_params(forms):
                 {
                     'milestone': milestone,
                     'point': point,
-                    'due_assign': due_start,
+                    'due_assign': due_assign,
                     'due_close': due_close
                 }
             ],
@@ -57,6 +57,10 @@ def js_static(filename):
 @route('/css/<filename>')
 def css_static(filename):
     return static_file(filename, root='./public/css')
+
+@route('/css/images/<filename>')
+def css_static(filename):
+    return static_file(filename, root='./public/css/images')
 
 @route('/fonts/<filename>')
 def fonts_static(filename):

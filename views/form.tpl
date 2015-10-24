@@ -33,8 +33,8 @@
         </select>
       </div>
       <div class="form-group col-md-4">
-        <label for="title">Due Start:</label>
-        <input type="text" class="form-control" name="due_start" id="due_start">
+        <label for="title">Due Assign:</label>
+        <input type="text" class="form-control" name="due_assign" id="due_assign">
       </div>
       <div class="form-group col-md-4">
         <label for="title">Due Close:</label>
@@ -44,3 +44,4 @@
     <button type="submit" class="btn btn-default">Submit</button>
   </form>
 </div>
+
