@@ -1,5 +1,7 @@
 import json
+import os
 import urllib2
+from datetime import datetime
 from bottle import HTTPResponse
 
 class CreateTicket:
@@ -54,7 +56,12 @@ class CreateTicket:
         
         for m in ['admin', 'guest']:
             ticket_id2 = self.create_slave_ticket(trac, forms, ticket_id, m)
-            print ticket_id2
+        
+        now = datetime.now()
+        result = { "Date": now.strftime("%Y/%m/%d %H:%M:%S"), "Title": forms.get("title"), "Link": trac.get_ticket_link(ticket_id)}
+        filename = now.strftime("%Y%m%d%H%M%S") + ".json"
+        with open(os.path.abspath('./archives/' + filename), 'w') as fp:
+            json.dump(result, fp)
         
         return HTTPResponse(status=200, body="Create ticket: %s" % ticket_id)
 

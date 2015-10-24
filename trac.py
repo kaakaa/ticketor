@@ -51,6 +51,9 @@ class Trac:
 		req.add_header('Content-Type', 'application/json')
 		return urllib2.urlopen(req, json.dumps(json_params)).read()
 
+	def get_ticket_link(self, id):
+		return "http://%s:%s/trac/%s/%s" % (self.host, self.port, self.project_name, self.ticket_path % id)
+		
 	def get_milestones(self):
 		return self.milestones
 	def get_components(self):
