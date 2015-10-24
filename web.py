@@ -1,56 +1,17 @@
 import trac
 import json
+import sys
 import urllib2
 from bottle import default_app, route, run, static_file, template, request, HTTPResponse
 
-app = default_app()
+sys.path.append('rpc')
+import create_ticket
 
+app = default_app()
 trac_server = trac.Trac()
 
-def make_params(forms):
-    title = forms.get('title')
-    desc = forms.get('desc')
-    point = forms.get('point')
-    component = forms.get('component')
-    milestone = forms.get('milestone')
-    due_assign = forms.get('due_assign')
-    due_close = forms.get('due_close')
-    
-    return {
-        'params': 
-            [
-                title, 
-                desc, 
-                {
-                    'component': component,
-                    'milestone': milestone,
-                    'point': point,
-                    'due_assign': due_assign,
-                    'due_close': due_close
-                }
-            ],
-        'method': 'ticket.create'
-    }
 
-def format_response(response):
-    res_json = json.loads(response)
-    if res_json['error'] is None:
-        return res_json['result']
-    else:
-        raise urllib2.HTTPError(url='http://trac', code=500, msg=res_json['error'], hdrs={}, fp=None)
-
-def create_master_ticket(trac, forms):
-    json_params = make_params(forms)
-    response = trac.callrpc(json_params)
-    return format_response(response)
-
-def create_slave_ticket(forms, parent_id, member):
-    json_params = make_params(forms)
-    json_params['params'][2]['parents'] = str(parent_id)
-    json_params['params'][2]['reporter'] = member
-    
-    response = trac_server.callrpc(json_params)
-    return format_response(response)
+## Static files 
 
 @route('/js/<filename>')
 def js_static(filename):
@@ -68,7 +29,7 @@ def css_static(filename):
 def fonts_static(filename):
     return static_file(filename, root='./public/fonts')
 
-
+## REST Phage
 
 @route('/form')
 def index():
@@ -81,16 +42,11 @@ def tasks():
 @route('/regist', method='post')
 def regist():
     try:
-        ticket_id = create_master_ticket(trac_server, request.forms)
-        
-        for m in ['admin', 'guest']:
-            ticket_id2 = create_slave_ticket(request.forms, ticket_id, m)
-            print ticket_id2        
-        
-        return HTTPResponse(status=200, body="Create ticket: %s" % ticket_id)
-
+        return create_ticket.CreateTicket().create_team_ticket(trac_server, request.forms)
     except urllib2.URLError, e:
         return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
+
+## Initialize Phase
 
 def convert_keys_to_string(dictionary):
     """Recursively converts dictionary keys to strings."""

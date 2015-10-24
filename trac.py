@@ -12,7 +12,7 @@ class Trac:
 	milestones = []
 	components = []
 
-	members = ['admin', 'guest']
+	members = []
 	
 	def get_or_else(self, app, key, default):
 		return app.config[key] if app.config.has_key(key) else default
@@ -45,7 +45,6 @@ class Trac:
 		opener = urllib2.build_opener(authhandler)
 		
 		urllib2.install_opener(opener)
-
 
 	def callrpc(self, json_params):
 		req = urllib2.Request("http://%s:%s/trac/%s/%s" % (self.host, self.port, self.project_name, self.jsonrpc_path))
