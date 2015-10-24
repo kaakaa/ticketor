@@ -10,6 +10,7 @@ def make_params(forms):
     title = forms.get('title')
     desc = forms.get('desc')
     point = forms.get('point')
+    component = forms.get('component')
     milestone = forms.get('milestone')
     due_assign = forms.get('due_assign')
     due_close = forms.get('due_close')
@@ -20,6 +21,7 @@ def make_params(forms):
                 title, 
                 desc, 
                 {
+                    'component': component,
                     'milestone': milestone,
                     'point': point,
                     'due_assign': due_assign,
@@ -66,9 +68,11 @@ def css_static(filename):
 def fonts_static(filename):
     return static_file(filename, root='./public/fonts')
 
+
+
 @route('/form')
 def index():
-    return template('form')
+    return template('form', milestones=trac.get_milestones(), components=trac.get_components())
 
 @route('/tasks')
 def tasks():
@@ -77,7 +81,6 @@ def tasks():
 @route('/regist', method='post')
 def regist():
     try:
-        trac.install_auth('admin', 'admin')
         ticket_id = create_master_ticket(trac, request.forms)
         
         for m in members:
@@ -88,5 +91,5 @@ def regist():
 
     except urllib2.URLError, e:
         return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
-    
+
 run(host='localhost', port=8081, reloader=True)

@@ -8,13 +8,6 @@
         <label for="title">Title:</label>
         <input type="text" class="form-control" name="title" id="title">
       </div>
-      <div class="form-group col-md-4">
-        <label for="milestone">Milestone: </label>
-        <select class="form-control" name="milestone" id="milestone">
-          <option>Iterate1</option>
-          <option>Iterate2</option>
-        </select>
-      </div>
     </div>
     <div class="form-group">
       <label for="desc">Description:</label>
@@ -22,6 +15,22 @@
     </div>
     <div class="row">
       <div class="form-group col-md-4">
+        <label for="component">Component: </label>
+        <select class="form-control" name="component" id="component">
+          %for ms in components:
+            <option>{{ms}}</option>
+          %end
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="milestone">Milestone: </label>
+        <select class="form-control" name="milestone" id="milestone">
+          %for ms in milestones:
+            <option>{{ms}}</option>
+          %end
+        </select>
+      </div>
+      <div class="form-group col-md-2">
         <label for="point">Point: </label>
         <select class="form-control" name="point" id="point">
           <option>1</option>
@@ -32,6 +41,8 @@
           <option>13</option>
         </select>
       </div>
+    </div>
+    <div class="row">
       <div class="form-group col-md-4">
         <label for="title">Due Assign:</label>
         <input type="text" class="form-control" name="due_assign" id="due_assign">
