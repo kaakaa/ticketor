@@ -66,6 +66,10 @@ def fonts_static(filename):
 def index():
     return template('form')
 
+@route('/tasks')
+def tasks():
+    return template('tasks')
+
 @route('/regist', method='post')
 def regist():
     try:
