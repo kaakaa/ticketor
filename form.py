@@ -1,7 +1,7 @@
 import trac
 import json
 import urllib2
-from bottle import route, run, template, request, HTTPResponse
+from bottle import route, run, static_file, template, request, HTTPResponse
 
 trac = trac.Trac()
 members = ['admin', 'guest']
@@ -10,6 +10,9 @@ def make_params(forms):
     title = forms.get('title')
     desc = forms.get('desc')
     point = forms.get('point')
+    milestone = forms.get('milestone')
+    due_start = forms.get('due_start')
+    due_close = forms.get('due_close')
     
     return {
         'params': 
@@ -17,9 +20,10 @@ def make_params(forms):
                 title, 
                 desc, 
                 {
-                    'milestone': 'Iterate1',
+                    'milestone': milestone,
                     'point': point,
-                    'due_start': '2015/10/27'
+                    'due_assign': due_start,
+                    'due_close': due_close
                 }
             ],
         'method': 'ticket.create'
@@ -34,6 +38,7 @@ def format_response(response):
 
 def create_master_ticket(trac, forms):
     json_params = make_params(forms)
+    print json_params
     response = trac.callrpc(json_params)
     return format_response(response)
 
@@ -44,6 +49,18 @@ def create_slave_ticket(forms, parent_id, member):
     
     response = trac.callrpc(json_params)
     return format_response(response)
+
+@route('/js/<filename>')
+def js_static(filename):
+    return static_file(filename, root='./public/js')
+
+@route('/css/<filename>')
+def css_static(filename):
+    return static_file(filename, root='./public/css')
+
+@route('/fonts/<filename>')
+def fonts_static(filename):
+    return static_file(filename, root='./public/fonts')
 
 @route('/form')
 def index():
