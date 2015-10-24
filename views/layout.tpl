@@ -25,17 +25,12 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li id='nav-form'><a href="/form">Regist Team Task</a></li>
-            <li id='nav-tasks'><a href="/tasks">Team Tasks</a></li>
+            <li id='nav-archives'><a href="/archives">Archives</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Trac<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another Action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="driver"></li>
-                <li class="dropdown-header>Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li><a href="#">Top</a></li>
+                <li><a href="#">Kanban</a></li>
               </ul>
             </li>
           </ul>

@@ -31,25 +31,32 @@ def fonts_static(filename):
 
 ## REST Phage
 
-@route('/form')
+@route('/')
 def index():
-    return template('form', milestones=trac_server.get_milestones(), components=trac_server.get_components())
+    redirect('/form')
+
+@route('/form')
+def form():
+    return template('form',
+        members    = trac_server.get_team_members(),
+        milestones = trac_server.get_milestones(),
+        components = trac_server.get_components())
 
 def read_json(file):
     with open(file) as fp:
         return json.load(fp)
 
-@route('/tasks')
-def tasks():
+@route('/archives')
+def archives():
     files = sorted(os.listdir('./archives'), reverse=True)
     archives = map(read_json, [os.path.abspath('./archives/' + f) for f in files[0:10]])
-    return template('tasks', archives=archives)
+    return template('archives', archives=archives)
 
 @route('/regist', method='post')
 def regist():
     try:
         create_ticket.CreateTicket().create_team_ticket(trac_server, request.forms)
-        redirect('/tasks', 303)
+        redirect('/archives', 303)
     except urllib2.URLError, e:
         return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
 

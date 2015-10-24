@@ -54,6 +54,8 @@ class Trac:
 	def get_ticket_link(self, id):
 		return "http://%s:%s/trac/%s/%s" % (self.host, self.port, self.project_name, self.ticket_path % id)
 		
+	def get_team_members(self):
+		return self.members
 	def get_milestones(self):
 		return self.milestones
 	def get_components(self):
