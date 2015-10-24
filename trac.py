@@ -13,15 +13,18 @@ class Trac:
 	components = []
 
 	members = ['admin', 'guest']
+	
+	def get_or_else(self, app, key, default):
+		return app.config[key] if app.config.has_key(key) else default
 
 	def initialize(self, app):
-		self.host = app.config['trac.host'] if app.config.has_key('trac.host') else 'localhost'
-		self.port = app.config['trac.port'] if app.config.has_key('trac.port') else '8080'
-		self.project_name = app.config['trac.project_name'] if app.config.has_key('trac.project_name') else 'SampleProject'
-		self.members = app.config['trac.team_members'] if app.config.has_key('trac.team_members') else ['admin']
+		self.host = self.get_or_else(app, 'trac.host', 'localhost')
+		self.port = self.get_or_else(app, 'trac.port', '8080')
+		self.project_name = self.get_or_else(app, 'trac.project_name', 'SampleProject')
+		self.members = self.get_or_else(app, 'trac.team_members', ['admin', 'guest'])
 
-		u = app.config['trac.rpc.username'] if app.config.has_key('trac.rpc.username') else 'admin'
-		p = app.config['trac.rpc.password'] if app.config.has_key('trac.rpc.password') else 'admin'
+		u = self.get_or_else(app, 'trac.rpc.username', 'admin')
+		p = self.get_or_else(app, 'trac.rpc.password', 'admin')
 		self.install_auth(u, p)
 		
 		self.milestones = self.read_milestones()
