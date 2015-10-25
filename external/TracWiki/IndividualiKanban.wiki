@@ -1,0 +1,83 @@
+= admin's board =
+\\
+{{{
+#!div style="float:left; margin-right:1em; width:45%"
+== 予定タスク ==
+
+[[ReportInclude(16?MEMBER=admin&MS=Iterate1)]]
+}}}
+
+{{{
+#!div style="float:left; margin-right:1em; width:45%"
+== 完了タスク ==
+
+[[ReportInclude(15?MEMBER=admin&MS=Iterate1)]]
+}}}
+
+{{{
+#!div style="clear:both"
+}}}
+\\
+\\
+\\
+== Kanban ==
+\\
+{{{
+#!div style="float:left; margin-right:1em; width:30%"
+
+= Open Tickets = 
+
+Total: [[TicketQuery(status=new|reopened,format=count)]] 
+
+[[TicketQuery(group=priority,status=new|reopened)]]
+
+}}}
+
+{{{
+#!div style="float:left; margin-right:1em; width:30%" 
+
+= Work In Progress =
+
+Total: [[TicketQuery(status=accepted|testable,format=count)]] 
+
+== Started ==
+
+[[TicketQuery(status=accepted,order=priority,group=owner)]]
+
+== Ready for Test ==
+
+[[TicketQuery(status=testable&review_issues=0&reviewed!=,group=developertest)]]
+
+== Reviewed tickets with issues ==
+
+[[TicketQuery(review_issues=1,group=owner,status=testable|closed,resolution=fixed)]]
+
+== Unreviewed tickets == 
+
+[[TicketQuery(review_issues!=1,status=closed|testable,group=status,resolution=fixed,reviewed=)]]
+
+
+}}}
+{{{
+#!div style="float:left; margin-right:1em; width:30%" 
+
+
+= Closed Tickets = 
+
+Total fixed: [[TicketQuery(status=closed,resolution=fixed,format=count)]] 
+Other: [[TicketQuery(status=closed,resolution!=fixed,format=count)]] 
+
+== Fixed tickets ==
+
+[[TicketQuery(status=closed,group=type,resolution=fixed)]]
+
+== Other resolutions ==
+
+[[TicketQuery(status=closed,group=resolution,resolution!=fixed)]]
+
+
+}}}
+
+{{{
+#!div style="clear:both"
+}}}
