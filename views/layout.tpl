@@ -25,6 +25,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li id='nav-form'><a href="/form">Regist Team Task</a></li>
+            <li id='nav-update'><a href="/update">Update Task</a></li>
             <li id='nav-archives'><a href="/archives">Archives</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Trac<span class="caret"></span></a>

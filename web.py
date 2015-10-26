@@ -5,13 +5,16 @@ import os, sys
 import urllib2
 from datetime import datetime
 from bottle import default_app, redirect, route, run, static_file, template, request, HTTPResponse, TEMPLATE_PATH
-from bottledaemon import daemon_run
+#from bottledaemon import daemon_run
 
 rootdir = os.path.abspath('.')
 TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
 
 sys.path.append('rpc')
 import create_ticket
+import search_ticket
+import get_ticket
+import update_ticket
 
 app = default_app()
 trac_server = trac.Trac()
@@ -48,13 +51,41 @@ def form():
         milestones = trac_server.get_milestones(),
         components = trac_server.get_components())
 
+@route('/update')
+def update():
+    return template('update',
+        members    = trac_server.get_team_members(),
+        milestones = trac_server.get_milestones(),
+        components = trac_server.get_components(),
+        tickets    = [])
+
+
+@route('/search', method='post')
+def search():
+    ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
+    tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
+
+    return template('update',
+        members    = trac_server.get_team_members(),
+        milestones = trac_server.get_milestones(),
+        components = trac_server.get_components(),
+        tickets    = tickets)
+    
+@route('/update', method='post')
+def update():
+    tickets = update_ticket.UpdateTicket().update_ticket(trac_server, request.forms)
+    return template('update',
+        members    = trac_server.get_team_members(),
+        milestones = trac_server.get_milestones(),
+        components = trac_server.get_components(),
+        tickets    = tickets)
+    
 def read_json(file):
     with open(file) as fp:
         return json.load(fp)
 
 @route('/archives')
 def archives():
-    print os.path.abspath('.')
     files = sorted(glob.glob(rootdir + '/archives/*.json'), reverse=True)
     archives = map(read_json, [f for f in files[0:10]])
     return template('archives', archives=archives)
@@ -91,4 +122,5 @@ def initialize():
 
 if __name__ == '__main__':
     initialize()
-    daemon_run(host='0.0.0.0', port="5200", pidfile=(rootdir + '/daemon/bottle.pid'), logfile=(rootdir + '/daemon/bottle.log'))
+    run(host="0.0.0.0", port="8081")
+    # daemon_run(host='0.0.0.0', port="5200", pidfile=(rootdir + '/daemon/bottle.pid'), logfile=(rootdir + '/daemon/bottle.log'))
