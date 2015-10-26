@@ -1,8 +1,14 @@
 import trac
 import json
+import glob
 import os, sys
 import urllib2
-from bottle import default_app, redirect, route, run, static_file, template, request, HTTPResponse
+from datetime import datetime
+from bottle import default_app, redirect, route, run, static_file, template, request, HTTPResponse, TEMPLATE_PATH
+from bottledaemon import daemon_run
+
+rootdir = os.path.abspath('.')
+TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
 
 sys.path.append('rpc')
 import create_ticket
@@ -15,19 +21,19 @@ trac_server = trac.Trac()
 
 @route('/js/<filename>')
 def js_static(filename):
-    return static_file(filename, root='./public/js')
+    return static_file(filename, root=rootdir+'/public/js')
 
 @route('/css/<filename>')
 def css_static(filename):
-    return static_file(filename, root='./public/css')
+    return static_file(filename, root=rootdir+'/public/css')
 
 @route('/css/images/<filename>')
 def css_static(filename):
-    return static_file(filename, root='./public/css/images')
+    return static_file(filename, root=rootdir+'/public/css/images')
 
 @route('/fonts/<filename>')
 def fonts_static(filename):
-    return static_file(filename, root='./public/fonts')
+    return static_file(filename, root=rootdir+'/public/fonts')
 
 ## REST Phage
 
@@ -48,14 +54,23 @@ def read_json(file):
 
 @route('/archives')
 def archives():
-    files = sorted(os.listdir('./archives'), reverse=True)
-    archives = map(read_json, [os.path.abspath('./archives/' + f) for f in files[0:10]])
+    print os.path.abspath('.')
+    files = sorted(glob.glob(rootdir + '/archives/*.json'), reverse=True)
+    archives = map(read_json, [f for f in files[0:10]])
     return template('archives', archives=archives)
 
 @route('/regist', method='post')
 def regist():
     try:
-        create_ticket.CreateTicket().create_team_ticket(trac_server, request.forms)
+        ticket_id = create_ticket.CreateTicket().create_team_ticket(trac_server, request.forms)
+
+        # Output archive file
+        now = datetime.now()
+        result = { "Date": now.strftime("%Y/%m/%d %H:%M:%S"), "Title": str(request.forms.get("title")), "Link": trac_server.get_ticket_link(ticket_id)}
+        filename = now.strftime("%Y%m%d%H%M%S") + ".json"
+        with open(os.path.abspath(rootdir + '/archives/' + filename), 'w') as fp:
+            json.dump(result, fp)
+        
         redirect('/archives', 303)
     except urllib2.URLError, e:
         return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
@@ -70,10 +85,11 @@ def convert_keys_to_string(dictionary):
         for k, v in dictionary.items())
 
 def initialize():
-    with open('./conf/config.json') as fp:
+    with open(rootdir + '/conf/config.json') as fp:
         app.config.load_dict(convert_keys_to_string(json.load(fp)))
     trac_server.initialize(app)
 
 if __name__ == '__main__':
     initialize()
-    run(host='localhost', port=8081, reloader=True)
+    # run(host='0.0.0.0', port=5200, reloader=True)
+    daemon_run(host='0.0.0.0', port="5200", pidfile=(rootdir + '/daemon/bottle.pid'), logfile=(rootdir + '/daemon/bottle.log'))
