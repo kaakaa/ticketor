@@ -56,52 +56,54 @@
   <hr>
   
   <div class="container">
-    <h2>Tickets</h2>
-    <form role="form" action="/update" method="post">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Reporter</th>
-            <th>Due Assigin</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          %for ticket in tickets:
+    %if len(tickets) != 0:
+      <h2>Tickets</h2>
+      <form role="form" action="/update" method="post">
+        <table class="table table-hover">
+          <thead>
             <tr>
-              <td><label><input type="checkbox" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input></label></td>
-              <td>{{ticket['summary']}}</td>
-              <td>{{ticket['reporter']}}</td>
-              <td>{{ticket['due_assign']}}</td>
-              <td>{{ticket['status']}}</td>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Reporter</th>
+              <th>Due Assigin</th>
+              <th>Status</th>
             </tr>
-          %end
-        </tbody>
-      </table>
-      
-      <hr>
-      
-      <p><b>Change Status</b></p>
-      <p>
-        <label class="radio-inline"><input type="radio" value="new" name="status" id="status">new</label>
-        <label class="radio-inline"><input type="radio" value="assigned" name="status" id="status">assigned</label>
-        <label class="radio-inline"><input type="radio" value="accepted" name="status" id="status">accepted</label>
-        <label class="radio-inline"><input type="radio" value="closed" name="status" id="status">closed</label>
-      </p>
-      <div class="row">
-        <div class="form-group col-md-4">
-          <label for="member">Member(acceptedを選択した場合は必須): </label>
-          <select class="form-control" name="targetuser" id="targetuser">
-            %for member in members:
-              <option>{{member}}</option>
+          </thead>
+          <tbody>
+            %for ticket in tickets:
+              <tr>
+                <td><label><input type="checkbox" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input></label></td>
+                <td>{{ticket['summary']}}</td>
+                <td>{{ticket['reporter']}}</td>
+                <td>{{ticket['due_assign']}}</td>
+                <td>{{ticket['status']}}</td>
+              </tr>
             %end
-          </select>
+          </tbody>
+        </table>
+      
+        <hr>
+      
+        <p><b>Change Status</b></p>
+        <p>
+          <label class="radio-inline"><input type="radio" value="new" name="status" id="status">new</label>
+          <label class="radio-inline"><input type="radio" value="assigned" name="status" id="status">assigned</label>
+          <label class="radio-inline"><input type="radio" value="accepted" name="status" id="status">accepted</label>
+          <label class="radio-inline"><input type="radio" value="closed" name="status" id="status">closed</label>
+        </p>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="member">Member(acceptedを選択した場合は必須): </label>
+            <select class="form-control" name="targetuser" id="targetuser">
+              %for member in members:
+              <option>{{member}}</option>
+              %end
+            </select>
+          </div>
         </div>
-      </div>
-      <button type="submit" class="btn btn-default">Update</button>
-    </form>
+        <button type="submit" class="btn btn-default">Update</button>
+      </form>
+    %end
   </div>
 </div>
 
