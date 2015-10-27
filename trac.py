@@ -1,5 +1,10 @@
 import urllib2
 import json
+import gevent
+from gevent import monkey
+
+monkey.patch_all()
+
 
 class Trac:
 	host = None
@@ -8,6 +13,8 @@ class Trac:
 
 	jsonrpc_path = 'login/jsonrpc'
 	ticket_path = 'ticket/%s'
+	
+	auth = {}
 	
 	milestones = []
 	components = []
@@ -25,9 +32,8 @@ class Trac:
 		self.project_name = self.get_or_else(app, 'trac.project_name', 'SampleProject')
 		self.members = self.get_or_else(app, 'trac.team_members', [])
 
-		u = self.get_or_else(app, 'trac.rpc.username', 'admin')
-		p = self.get_or_else(app, 'trac.rpc.password', 'admin')
-		self.install_auth(u, p)
+		self.auth['user'] = self.get_or_else(app, 'trac.rpc.username', 'admin')
+		self.auth['pass'] = self.get_or_else(app, 'trac.rpc.password', 'admin')
 		
 		self.milestones = self.read_milestones()
 		self.components = self.read_components()
@@ -49,9 +55,21 @@ class Trac:
 		urllib2.install_opener(opener)
 
 	def callrpc(self, json_params):
+		self.install_auth(self.auth['user'], self.auth['pass'])
 		req = urllib2.Request("http://%s%s/trac/%s/%s" % (self.host, self.port, self.project_name, self.jsonrpc_path))
 		req.add_header('Content-Type', 'application/json')
 		return urllib2.urlopen(req, json.dumps(json_params)).read()
+		
+	def request_par(self, id, json_params, buf):
+		res = self.callrpc(json_params)
+		res_dict = {'id': id, 'response': res}
+		buf.append(res_dict)
+
+	def callrpc_par(self, json_params_array):
+		buf = []
+		jobs = [gevent.spawn(self.request_par, id, json, buf) for id, json in json_params_array.items()]
+		gevent.joinall(jobs)
+		return buf
 
 	def get_ticket_link(self, id):
 		return "http://%s%s/trac/%s/%s" % (self.host, self.port, self.project_name, self.ticket_path % id)
