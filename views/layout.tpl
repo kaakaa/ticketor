@@ -53,6 +53,10 @@
       $("#due_assign").datepicker({dateFormat: 'yy/mm/dd'});
       $("#due_close").datepicker({dateFormat: 'yy/mm/dd'});
     });
+    
+    $("#checkall").click(function() {
+      $(".check_id").prop('checked', $(this).prop('checked'));
+    });
   </script>
 </body>
 </html>

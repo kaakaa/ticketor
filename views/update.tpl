@@ -73,9 +73,18 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td><label><input type="checkbox" id="checkall" name="checkall">CheckAll</input></label></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+          <tbody>
             %for ticket in tickets:
               <tr>
-                <td><label><input type="checkbox" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input></label></td>
+                <td><label><input type="checkbox" class="check_id" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input></label></td>
                 <td>{{ticket.get('summary', '-')}}</td>
                 <td>{{ticket.get('reporter','-')}}</td>
                 <td>{{ticket.get('due_assign', '-')}}</td>
