@@ -13,18 +13,27 @@
     <form role="form" action="/search" method="post">
       <div class="row">
         <div class="form-group col-md-4">
-          <label for="member">Member: </label>
+          <label for="member">報告者: </label>
           <select class="form-control" name="member" id="member">
             <option></option>
             %for member in members:
               <option>{{member}}</option>
             %end
           </select>
-        </div>        
+        </div>
+        <div class="form-group col-md-4">
+          <label for="owner">担当者: </label>
+          <select class="form-control" name="owner" id="owner">
+            <option></option>
+            %for member in members:
+              <option>{{member}}</option>
+            %end
+          </select>
+        </div>
       </div>
       <div class="row">
         <div class="form-group col-md-4">
-          <label for="component">Component: </label>
+          <label for="component">コンポーネント: </label>
           <select class="form-control" name="component" id="component">
             <option></option>
             %for ms in components:
@@ -33,7 +42,7 @@
           </select>
         </div>
         <div class="form-group col-md-4">
-          <label for="milestone">Milestone: </label>
+          <label for="milestone">マイルストーン: </label>
           <select class="form-control" name="milestone" id="milestone">
             <option></option>
             %for ms in milestones:
@@ -44,15 +53,15 @@
       </div>
       <div class="row">
         <div class="form-group col-md-4">
-          <label for="title">Due Assign:</label>
+          <label for="title">開始予定日:</label>
           <input type="text" class="form-control" name="due_assign" id="due_assign">
         </div>
         <div class="form-group col-md-4">
-          <label for="title">Due Close:</label>
+          <label for="title">終了予定日:</label>
           <input type="text" class="form-control" name="due_close" id="due_close">
         </div>
       </div>
-      <button type="submit" class="btn btn-default">Submit</button>
+      <button type="submit" class="btn btn-default">検索</button>
     </form>
   </div>
   
@@ -60,21 +69,20 @@
   
   <div class="container">
     %if len(tickets) != 0:
-      <h2>Tickets</h2>
       <form role="form" action="/update" method="post">
         <table class="table table-hover">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Title</th>
-              <th>Reporter</th>
-              <th>Due Assigin</th>
-              <th>Status</th>
+              <th>タイトル</th>
+              <th>報告者</th>
+              <th>開始予定日</th>
+              <th>状態</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><label><input type="checkbox" id="checkall" name="checkall">CheckAll</input></label></td>
+              <td><label><input type="checkbox" data-toggle="popover" data-placement="top" data-content="最低１つはチェックしてください。" id="checkall" name="checkall">CheckAll</input></label></td>
               <td></td>
               <td></td>
               <td></td>
@@ -93,29 +101,53 @@
             %end
           </tbody>
         </table>
-      
+        
         <hr>
-      
-        <p><b>Change Status</b></p>
-        <p>
-          <label class="radio-inline"><input type="radio" value="new" name="status" id="status">new</label>
-          <label class="radio-inline"><input type="radio" value="assigned" name="status" id="status">assigned</label>
-          <label class="radio-inline"><input type="radio" value="accepted" name="status" id="status">accepted</label>
-          <label class="radio-inline"><input type="radio" value="closed" name="status" id="status">closed</label>
-        </p>
+        
+        <h2>Change Status</h2>
         <div class="row">
           <div class="form-group col-md-4">
-            <label for="member">Member(acceptedを選択した場合は必須): </label>
-            <select class="form-control" name="targetuser" id="targetuser">
+            <label for="member">Member</label>
+            <select class="form-control" name="targetuser" id="targetuser" required>
+              <option></option>
               %for member in members:
               <option>{{member}}</option>
               %end
             </select>
           </div>
         </div>
-        <button type="submit" class="btn btn-default">Update</button>
+        <div class="form-group">
+          <p>
+            <label class="radio-inline"><input type="radio" value="new" name="status" id="status" checked>new</label>
+            <label class="radio-inline"><input type="radio" value="assigned" name="status" id="status">assigned</label>
+            <label class="radio-inline"><input type="radio" value="accepted" name="status" id="status">accepted</label>
+            <label class="radio-inline"><input type="radio" value="closed" name="status" id="status">closed</label>
+          </p>
+        </div>
+        <div>
+          <button type="submit" id="update" class="btn btn-default">Update</button>
+        </div>
+        
+        <div class="alert alert-danger fade" id="checkAtLeastOne" style="margin-top: 10px;">
+          <a class="close" data-dismiss="alert" href="#">&times;</a>
+          <p>更新するチケットを選択してください</p>
+        </div>
       </form>
     %end
   </div>
 </div>
-
+<script type="text/javascript">
+  $(function(){
+    $("#update").click(function() {
+      checked = $("input[type=checkbox]:checked").length;
+      if(!checked) {
+        $('#checkAtLeastOne').addClass('in');
+        return false;
+      }
+    });
+  });
+  
+  $("#checkall").click(function() {
+    $(".check_id").prop('checked', $(this).prop('checked'));
+  });
+</script>

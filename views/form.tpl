@@ -13,17 +13,17 @@
     <form role="form" action="/regist" method="post">
       <div class="row">
         <div class="form-group col-md-8">
-          <label for="title">Title:</label>
+          <label for="title">タイトル:</label>
           <input type="text" class="form-control" name="title" id="title">
         </div>
       </div>
       <div class="form-group">
-        <label for="desc">Description:</label>
+        <label for="desc">概要:</label>
         <textarea class="form-control" rows="10" name="desc" id="desc"></textarea>
       </div>
       <div class="row">
         <div class="form-group col-md-4">
-          <label for="component">Component: </label>
+          <label for="component">コンポーネント: </label>
           <select class="form-control" name="component" id="component">
             %for ms in components:
               <option>{{ms}}</option>
@@ -31,7 +31,7 @@
           </select>
         </div>
         <div class="form-group col-md-4">
-          <label for="milestone">Milestone: </label>
+          <label for="milestone">マイルストーン: </label>
           <select class="form-control" name="milestone" id="milestone">
             %for ms in milestones:
               <option>{{ms}}</option>
@@ -39,7 +39,7 @@
           </select>
         </div>
         <div class="form-group col-md-2">
-          <label for="point">Point: </label>
+          <label for="point">ポイント: </label>
           <select class="form-control" name="point" id="point">
             <option>1</option>
             <option>2</option>
@@ -52,11 +52,11 @@
       </div>
       <div class="row">
         <div class="form-group col-md-4">
-          <label for="title">Due Assign:</label>
+          <label for="title">開始予定日:</label>
           <input type="text" class="form-control" name="due_assign" id="due_assign">
         </div>
         <div class="form-group col-md-4">
-          <label for="title">Due Close:</label>
+          <label for="title">終了予定日:</label>
           <input type="text" class="form-control" name="due_close" id="due_close">
         </div>
       </div>

@@ -8,6 +8,8 @@ class SearchTicket:
         buf = []
         if "member" in non_empty_forms:
             buf.append("reporter=" + forms.get("member"))
+        if "owner" in non_empty_forms:
+            buf.append("owner=" + forms.get("owner"))
         if "component" in non_empty_forms:
             buf.append("component=" + forms.get("component"))
         if "milestone" in non_empty_forms:

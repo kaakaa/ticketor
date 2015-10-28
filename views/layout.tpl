@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="/css/jquery-ui.min.css">
   <link rel="stylesheet" href="/css/jquery-ui.structure.min.css">
   <link rel="stylesheet" href="/css/jquery-ui.theme.min.css">
+  <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -42,9 +45,6 @@
     %include
 
   </div>
-  <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
-  <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
   <script type="text/javascript">
     $(function(){
       $('#desc').val('== 概要 == \r\n\r\n\r\n== 前提条件 == \r\n\r\n\r\n== 完了条件 ==');
@@ -52,10 +52,6 @@
       
       $("#due_assign").datepicker({dateFormat: 'yy/mm/dd'});
       $("#due_close").datepicker({dateFormat: 'yy/mm/dd'});
-    });
-    
-    $("#checkall").click(function() {
-      $(".check_id").prop('checked', $(this).prop('checked'));
     });
   </script>
 </body>
