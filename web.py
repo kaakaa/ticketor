@@ -69,8 +69,8 @@ def search():
         members    = trac_server.get_team_members(),
         milestones = trac_server.get_milestones(),
         components = trac_server.get_components(),
-        tickets    = tickets)
-    
+        tickets    = sorted(tickets, key=lambda t: t.get('id')))
+        
 @route('/update', method='post')
 def update():
     tickets = update_ticket.UpdateTicket().update_ticket(trac_server, request.forms)
@@ -78,7 +78,7 @@ def update():
         members    = trac_server.get_team_members(),
         milestones = trac_server.get_milestones(),
         components = trac_server.get_components(),
-        tickets    = tickets)
+        tickets    = sorted(tickets, key=lambda t: t.get('id')))
     
 def read_json(file):
     with open(file) as fp:
