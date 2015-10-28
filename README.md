@@ -8,7 +8,7 @@
 ## Prerequirement
 
 ```
-pip install bottle bottledaemon
+pip install bottle bottledaemon gevent
 ```
 
 If using python 2.6, additionally execute bellow.
