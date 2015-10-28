@@ -15,6 +15,7 @@
         <div class="form-group col-md-4">
           <label for="member">Member: </label>
           <select class="form-control" name="member" id="member">
+            <option></option>
             %for member in members:
               <option>{{member}}</option>
             %end
@@ -25,6 +26,7 @@
         <div class="form-group col-md-4">
           <label for="component">Component: </label>
           <select class="form-control" name="component" id="component">
+            <option></option>
             %for ms in components:
               <option>{{ms}}</option>
             %end
@@ -33,6 +35,7 @@
         <div class="form-group col-md-4">
           <label for="milestone">Milestone: </label>
           <select class="form-control" name="milestone" id="milestone">
+            <option></option>
             %for ms in milestones:
               <option>{{ms}}</option>
             %end
@@ -73,10 +76,10 @@
             %for ticket in tickets:
               <tr>
                 <td><label><input type="checkbox" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input></label></td>
-                <td>{{ticket['summary']}}</td>
-                <td>{{ticket['reporter']}}</td>
-                <td>{{ticket['due_assign']}}</td>
-                <td>{{ticket['status']}}</td>
+                <td>{{ticket.get('summary', '-')}}</td>
+                <td>{{ticket.get('reporter','-')}}</td>
+                <td>{{ticket.get('due_assign', '-')}}</td>
+                <td>{{ticket.get('status', '-')}}</td>
               </tr>
             %end
           </tbody>

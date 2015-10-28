@@ -7,7 +7,7 @@ class SearchTicket:
         non_empty_forms = dict((k, v) for k, v in forms.items() if len(v) != 0)
         buf = []
         if "member" in non_empty_forms:
-            buf.append("member=" + forms.get("member"))
+            buf.append("reporter=" + forms.get("member"))
         if "component" in non_empty_forms:
             buf.append("component=" + forms.get("component"))
         if "milestone" in non_empty_forms:
