@@ -1,11 +1,10 @@
 import trac
-import json
+import json,csv
 import glob
 import os, sys
 import urllib2
 from datetime import datetime
 from bottle import default_app, redirect, route, run, static_file, template, request, HTTPResponse, TEMPLATE_PATH
-#from bottledaemon import daemon_run
 
 rootdir = os.path.abspath('.')
 TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
@@ -92,7 +91,19 @@ def archives():
 
 @route('/burndown')
 def burndown():
-    return template('burndown')
+    data = []
+    with open(rootdir + '/data/backlog/Iteration1.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            buf = []
+            for e in row:
+                if e.isdigit():
+                    buf.append(int(e))
+                else:
+                    buf.append(e)
+            data.append(buf)
+    print data
+    return template('burndown', data=data)
 
 @route('/regist', method='post')
 def regist():
