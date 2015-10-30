@@ -90,6 +90,10 @@ def archives():
     archives = map(read_json, [f for f in files[0:10]])
     return template('archives', archives=archives)
 
+@route('/burndown')
+def archives():
+    return template('burndown')
+
 @route('/regist', method='post')
 def regist():
     try:
