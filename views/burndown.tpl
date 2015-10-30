@@ -9,7 +9,7 @@
   <hr>
   
   <div class="container">
-    <script src="http://ccchart.com/js/ccchart.js" charset="utf-8"></script>
+    <script src="/js/ccchart.js" charset="utf-8"></script>
     <canvas id="chart"></canvas>
     
     <script>
