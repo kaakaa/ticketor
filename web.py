@@ -102,7 +102,6 @@ def burndown():
                 else:
                     buf.append(e)
             data.append(buf)
-    print data
     return template('burndown', data=data)
 
 @route('/regist', method='post')
