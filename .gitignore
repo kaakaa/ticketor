@@ -1,2 +1,4 @@
 *.pyc
 dev/
+data/archives/*
+data/backlog/*

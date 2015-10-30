@@ -90,19 +90,31 @@ def archives():
     return template('archives', archives=archives)
 
 @route('/burndown')
+def burn():
+    return template('burndown', 
+        data=[],
+        milestones = trac_server.get_milestones())
+
+@route('/burndown', method='post')
 def burndown():
+    ms = request.forms.get('milestone', '_')
+    
     data = []
-    with open(rootdir + '/data/backlog/Iteration1.csv', 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            buf = []
-            for e in row:
-                if e.isdigit():
-                    buf.append(int(e))
-                else:
-                    buf.append(e)
-            data.append(buf)
-    return template('burndown', data=data)
+    backlog = rootdir + '/data/backlog/' + ms + '.csv'
+    if os.path.exists(backlog):
+        with open(backlog, 'r') as f:
+            reader = csv.reader(f)
+            for row in reader:
+               buf = []
+               for e in row:
+                   if e.isdigit():
+                       buf.append(int(e))
+                   else:
+                       buf.append(e)
+               data.append(buf)
+    return template('burndown', 
+        data=data,
+        milestones = trac_server.get_milestones())
 
 @route('/regist', method='post')
 def regist():
