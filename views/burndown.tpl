@@ -3,19 +3,20 @@
 <div class="jumbotron">
   <div class="container">
     <h1>Burndown</h1>
-    <p>バーンダウンチャート</p>
+    <p>バーンダウンチャート  <button type="button" id="downloadchart" class="btn btn-primary">SAVE</button></p>
   </div
   
   <hr>
   
   <div class="container">
     <script src="http://ccchart.com/js/ccchart.js" charset="utf-8"></script>
-    <canvas id="hoge"></canvas>
+    <canvas id="chart"></canvas>
+    
     <script>
       var chartdata2 = {
         "config": {
-          "title": "Line Chart",
-          "subTitle": "Canvasを使ったシンプルなラインチャートです",
+          "title": "Burndown Chart",
+          "subTitle": "ccchartを使ったバーンダウンチャート",
           "type": "line",
           "lineWidth": 4,
           "colorSet": ["red","#FF9114","#3CB000","#00A8A2","#0036C0","#C328FF","#FF34C0"],
@@ -53,7 +54,15 @@
           ["ウーロン",200,123,312,200,402,300,512,774,825,999]
         ]
       };
-      ccchart.init('hoge', chartdata2)
+      ccchart.init('chart', chartdata2)
+    </script>
+    <script type="text/javascript" src="/js/download.js"></script>
+    <script type="text/javascript">
+      $('#downloadchart').on('click', function(event) {
+        event.preventDefault();
+        var canvas = document.getElementById('chart');
+        download(canvas.toDataURL('image/png'), 'burndown.png', 'image/png');
+      });
     </script>
   </div>
 </div>
