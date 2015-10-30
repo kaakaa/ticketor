@@ -86,12 +86,12 @@ def read_json(file):
 
 @route('/archives')
 def archives():
-    files = sorted(glob.glob(rootdir + '/archives/*.json'), reverse=True)
+    files = sorted(glob.glob(rootdir + '/data/archives/*.json'), reverse=True)
     archives = map(read_json, [f for f in files[0:10]])
     return template('archives', archives=archives)
 
 @route('/burndown')
-def archives():
+def burndown():
     return template('burndown')
 
 @route('/regist', method='post')
@@ -103,7 +103,7 @@ def regist():
         now = datetime.now()
         result = { "Date": now.strftime("%Y/%m/%d %H:%M:%S"), "Title": str(request.forms.get("title")), "Link": trac_server.get_ticket_link(ticket_id)}
         filename = now.strftime("%Y%m%d%H%M%S") + ".json"
-        with open(os.path.abspath(rootdir + '/archives/' + filename), 'w') as fp:
+        with open(os.path.abspath(rootdir + '/data/archives/' + filename), 'w') as fp:
             json.dump(result, fp)
         
         redirect('/archives', 303)
