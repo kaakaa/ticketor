@@ -149,7 +149,6 @@ def backlog():
         result.append(backlogs_csv)
     dates.insert(0, 'Date')
     result.insert(0, dates)
-    print result
     
     file = rootdir + '/data/backlog/' + request.forms.get('milestone', 'none') + '.csv'
     with open(file, 'w') as fp:
