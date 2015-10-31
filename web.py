@@ -3,7 +3,7 @@ import json,csv
 import glob
 import os, sys
 import urllib2
-from datetime import datetime
+from datetime import datetime, timedelta
 from bottle import default_app, redirect, route, run, static_file, template, request, HTTPResponse, TEMPLATE_PATH
 
 rootdir = os.path.abspath('.')
@@ -115,6 +115,49 @@ def burndown():
     return template('burndown', 
         data=data,
         milestones = trac_server.get_milestones())
+
+def daterange(start, end):
+    dates = []
+    for n in range((end - start).days):
+        dates.append(start + timedelta(n))
+    return dates
+
+def calculate_backlog(tickets, member, daterange):
+    my_tickets = [t for t in tickets if t['reporter'] == member]    
+    backlogs = {}
+    for date in daterange:
+        sum_point = sum([int(t['point']) for t in my_tickets if t.has_key('due_assign') and t['due_assign'] == date])
+        backlogs[date] = str(sum_point)
+    return backlogs
+        
+@route('/backlog', method='post')
+def backlog():
+    ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
+    tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
+    
+    start = datetime.strptime(request.forms.get('start', '2015/10/20'), '%Y/%m/%d')
+    end = datetime.strptime(request.forms.get('end', '2015/10/31'), '%Y/%m/%d')
+
+    dates = map(lambda d: d.strftime('%Y/%m/%d'), daterange(start, end))
+    result = []
+    for member in trac_server.get_team_members():
+        backlogs = calculate_backlog(tickets, member, dates)
+        backlogs_csv = [member]
+        for d in dates:
+            backlogs_csv.append(backlogs[d])
+        backlogs_csv.insert(0, member)
+        result.append(backlogs_csv)
+    dates.insert(0, 'Date')
+    result.insert(0, dates)
+    print result
+    
+    file = rootdir + '/data/backlog/' + request.forms.get('milestone', 'none') + '.csv'
+    with open(file, 'w') as fp:
+        for col in result:
+            fp.write(','.join(col))
+            fp.write('\n')
+    redirect('/burndown')
+
 
 @route('/regist', method='post')
 def regist():
