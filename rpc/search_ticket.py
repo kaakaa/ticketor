@@ -18,7 +18,9 @@ class SearchTicket:
             buf.append("due_assign=" + forms.get("due_assign"))
         if "due_close" in non_empty_forms:
             buf.append("due_close=" + forms.get("due_close"))
-        
+        if "max" in non_empty_forms:
+            buf.append("max=" + forms.get("max"))
+
         return {
             "params": [ "&".join(filter(None, buf))],
             "method": "ticket.query"
