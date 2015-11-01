@@ -10,10 +10,7 @@ rootdir = os.path.abspath('.')
 TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
 
 sys.path.append('rpc')
-import create_ticket
-import search_ticket
-import get_ticket
-import update_ticket
+
 
 app = default_app()
 trac_server = trac.Trac()
@@ -61,6 +58,9 @@ def update():
 
 @route('/search', method='post')
 def search():
+    import search_ticket
+    import get_ticket
+    
     ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
 
@@ -72,6 +72,8 @@ def search():
         
 @route('/update', method='post')
 def update():
+    import update_ticket
+    
     tickets = update_ticket.UpdateTicket().update_ticket(trac_server, request.forms)
     return template('update',
         members    = trac_server.get_team_members(),
@@ -140,6 +142,9 @@ def calculate_backlog(tickets, member, daterange):
         
 @route('/backlog', method='post')
 def backlog():
+    import search_ticket
+    import get_ticket
+    
     ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
     
@@ -170,6 +175,7 @@ def backlog():
 
 @route('/regist', method='post')
 def regist():
+    import create_ticket
     try:
         ticket_id = create_ticket.CreateTicket().create_team_ticket(trac_server, request.forms)
 
