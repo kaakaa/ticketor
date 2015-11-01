@@ -55,23 +55,27 @@ def update():
         components = trac_server.get_components(),
         tickets    = [])
 
-@route('/api/serach', method='post')
-def api_search(trac_server=None, request=None):
+@route('/api/search', method='post')
+def api_search():
     import search_ticket
     import get_ticket
     
     ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
-
-    return dict(members = trac_server.get_team_members(),
+    
+    response.status = 200
+    response.content_type = 'application/json'
+    return {'result': dict(members = trac_server.get_team_members(),
         milestones = trac_server.get_milestones(),
         components = trac_server.get_components(),
-        tickets    = sorted(tickets, key=lambda t: t.get('id')))
+        tickets    = sorted(tickets, key=lambda t: t.get('id')))}
 
 @route('/search', method='post')
 @view('update')
 def view_search():
-    return api_search(trac_server, request)
+    body = api_search()['result']
+    response.content_type = 'text/html; charset=UTF-8'
+    return body
 
 @route('/update', method='post')
 def update():
@@ -84,26 +88,35 @@ def update():
         components = trac_server.get_components(),
         tickets    = sorted(tickets, key=lambda t: t.get('id')))
     
-def read_json(file):
-    with open(file) as fp:
-        return json.load(fp)
 
-@route('/archives')
-def archives():
+@route('/api/archives')
+def api_archives():
     files = sorted(glob.glob(rootdir + '/data/archives/*.json'), reverse=True)
-    archives = map(read_json, [f for f in files[0:10]])
-    return template('archives', archives=archives)
+
+    def read_json(file):
+        with open(file) as fp:
+            return json.load(fp)
+    body = map(read_json, [f for f in files[0:10]])
+    response.status = 200
+    response.content_type = 'application/json'
+    return {'result': body}
+    
+@route('/archives')
+@view('archives')
+def archives():
+    body = api_archives()['result']
+    response.content_type = 'text/html; charset=UTF-8'
+    return dict(archives=body)
 
 @route('/burndown')
+@view('burndown')
 def burn():
-    return template('burndown', 
-        data=[],
-        milestones = trac_server.get_milestones())
+    response.content_type = 'text/html; charset=UTF-8'
+    return dict(data=[], milestones = trac_server.get_milestones())
 
-@route('/burndown', method='post')
-def burndown():
+@route('/api/backlogs', method='post')
+def api_backlogs():
     ms = request.forms.get('milestone', '_')
-    
     data = []
     backlog = rootdir + '/data/backlog/' + ms + '.csv'
     if os.path.exists(backlog):
@@ -117,9 +130,17 @@ def burndown():
                    else:
                        buf.append(e)
                data.append(buf)
-    return template('burndown', 
-        data=data,
-        milestones = trac_server.get_milestones())
+               
+    response.status = 200
+    response.content_type = 'application/json'
+    return {'result': data}
+    
+@route('/burndown', method='post')
+@view('burndown')
+def burndown():
+    body = api_backlogs()['result']
+    response.content_type = 'text/html; charset=UTF-8'
+    return dict(data=body, milestones = trac_server.get_milestones())
 
 def daterange(start, end):
     dates = []
