@@ -2,7 +2,6 @@ import json
 import urllib2
 
 class GetTicket:
-	
     def make_params(self, id):
         return {
             "params": [ int(id) ],
