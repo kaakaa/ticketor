@@ -4,7 +4,7 @@ import glob
 import os, sys
 import urllib2
 from datetime import datetime, timedelta
-from bottle import default_app, redirect, route, run, static_file, template, request, HTTPResponse, TEMPLATE_PATH
+from bottle import *
 
 rootdir = os.path.abspath('.')
 TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
@@ -55,21 +55,24 @@ def update():
         components = trac_server.get_components(),
         tickets    = [])
 
-
-@route('/search', method='post')
-def search():
+@route('/api/serach', method='post')
+def api_search(trac_server=None, request=None):
     import search_ticket
     import get_ticket
     
     ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
 
-    return template('update',
-        members    = trac_server.get_team_members(),
+    return dict(members = trac_server.get_team_members(),
         milestones = trac_server.get_milestones(),
         components = trac_server.get_components(),
         tickets    = sorted(tickets, key=lambda t: t.get('id')))
-        
+
+@route('/search', method='post')
+@view('update')
+def view_search():
+    return api_search(trac_server, request)
+
 @route('/update', method='post')
 def update():
     import update_ticket
