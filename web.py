@@ -128,7 +128,15 @@ def calculate_backlog(tickets, member, daterange):
     for date in daterange:
         sum_point = sum([int(t['point']) for t in my_tickets if t.has_key('due_assign') and t['due_assign'] == date])
         backlogs[date] = str(sum_point)
-    return backlogs
+    
+    burndown = {}
+    point = sum([int(v) for v in backlogs.values()])
+    all_point = point
+    for k,v in sorted(backlogs.items()):
+        point -= int(v)
+        burndown[k] = str(point)
+    burndown['Start'] = str(all_point)
+    return burndown
         
 @route('/backlog', method='post')
 def backlog():
@@ -142,12 +150,14 @@ def backlog():
     result = []
     for member in trac_server.get_team_members():
         backlogs = calculate_backlog(tickets, member, dates)
-        backlogs_csv = [member]
-        for d in dates:
+        backlogs_csv = [member, backlogs['Start']]
+        for d in sorted(dates):
             backlogs_csv.append(backlogs[d])
-        backlogs_csv.insert(0, member)
         result.append(backlogs_csv)
+        
     dates.insert(0, 'Date')
+    dates.insert(1, 'Start')
+    
     result.insert(0, dates)
     
     file = rootdir + '/data/backlog/' + request.forms.get('milestone', 'none') + '.csv'
