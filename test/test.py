@@ -1,16 +1,17 @@
-import sys
+import sys, os
 import unittest
 from mock import Mock
 from webtest import TestApp
 from bottle import *
 
-TEMPLATE_PATH.insert(0, os.path.abspath('../views'))
-sys.path.append('../')
+root = os.path.dirname(__file__)
+TEMPLATE_PATH.insert(0, os.path.join(root,os.pardir,'views'))
+sys.path.append(os.path.join(root, os.pardir))
 import web
 
 class Test(unittest.TestCase):
 	def setUp(self):
-		sys.path.append('../rpc')
+		sys.path.append(os.path.join(root, os.pardir, 'rpc'))
 		self.app = TestApp(web.app)
 	def tearDown(self):
 		pass
@@ -79,7 +80,7 @@ class Test(unittest.TestCase):
 		
 	def test_api_archives(self):
 		import glob
-		glob.glob = Mock(return_value=glob.glob('./test_data/archives/*.json'))
+		glob.glob = Mock(return_value=glob.glob(os.path.join(root, 'test_data/archives/*.json')))
 		res = self.app.get('/api/archives')
 		
 		assert res.status == '200 OK'
@@ -94,7 +95,7 @@ class Test(unittest.TestCase):
 		
 	def test_api_backlogs(self):
 		from helper import Helper
-		Helper.get_backlogdir = Mock(return_value='./test_data/backlog/')
+		Helper.get_backlogdir = Mock(return_value=os.path.join(root, 'test_data/backlog/'))
 		
 		res = self.app.post('/api/backlogs', {'milestone': 'Iteration1'})
 		
@@ -104,7 +105,7 @@ class Test(unittest.TestCase):
 		
 	def test_api_backlogs_empty(self):
 		from helper import Helper
-		Helper.get_backlogdir = Mock(return_value='./test_data/empty/')
+		Helper.get_backlogdir = Mock(return_value=os.path.join(root, 'test_data/empty/'))
 		
 		res = self.app.post('/api/backlogs', {'milestone': 'Iteration1'})
 		
@@ -123,14 +124,14 @@ class Test(unittest.TestCase):
 		Trac.get_team_members = Mock(return_value=['admin'])
 		Trac.get_milestones = Mock(return_value=['milestone1'])
 		Trac.get_components = Mock(return_value=['component1'])
-		Helper.get_backlogdir = Mock(return_value='./test_data/create_backlog/')
+		Helper.get_backlogdir = Mock(return_value=os.path.join(root,'test_data/create_backlog/'))
 		
 		res = self.app.post('/backlog')
 		
 		assert res.status == '302 Found'
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
-		assert os.path.getsize('./test_data/create_backlog/none.csv') == 34
+		assert os.path.getsize(os.path.join(root, 'test_data/create_backlog/none.csv')) == 34
 				
 	def test_burndown(self):
 		res = self.app.get('/burndown')
@@ -145,7 +146,7 @@ class Test(unittest.TestCase):
 
 		CreateTicket.create_team_ticket = Mock(return_value=1)
 		Trac.get_ticket_link = Mock(return_value='http://localhost/trac/ticket/1')
-		Helper.get_archivedir = Mock(return_value='./test_data/test_archives/')
+		Helper.get_archivedir = Mock(return_value=os.path.join(root, 'test_data/test_archives/'))
 		Helper.get_archive_filename = Mock(return_value='test.json')
 		
 		res = self.app.post('/regist', {'title': 'test_ticket'})
@@ -154,7 +155,7 @@ class Test(unittest.TestCase):
 		assert res.headers['Location'].endswith('/archives')
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
-		assert os.path.getsize('./test_data/test_archives/test.json') == 97
+		assert os.path.getsize(os.path.join(root, 'test_data/test_archives/test.json')) == 97
 
 if __name__ == '__main__':
 	print unittest.main()
