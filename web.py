@@ -112,7 +112,8 @@ def archives():
 def api_backlogs():
     ms = request.forms.get('milestone', '_')
     data = []
-    backlog = Helper.get_backlogdir(rootdir) + ms + '.csv'
+    backlog = Helper.get_backlog(rootdir, ms + '.csv')
+    print backlog
     if os.path.exists(backlog):
         with open(backlog, 'r') as f:
             reader = csv.reader(f)
@@ -154,7 +155,7 @@ def backlog():
     
     result.insert(0, dates)
     
-    file = Helper.get_backlogdir(rootdir) + request.forms.get('milestone', 'none') + '.csv'
+    file = Helper.get_backlog(rootdir, request.forms.get('milestone', 'none') + '.csv')
     with open(file, 'w') as fp:
         for col in result:
             fp.write(','.join(col))

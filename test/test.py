@@ -95,7 +95,7 @@ class Test(unittest.TestCase):
 		
 	def test_api_backlogs(self):
 		from helper import Helper
-		Helper.get_backlogdir = Mock(return_value=os.path.join(root, 'test_data/backlog/'))
+		Helper.get_backlog = Mock(return_value=os.path.join(root, 'test_data', 'backlog', 'Iteration1.csv'))
 		
 		res = self.app.post('/api/backlogs', {'milestone': 'Iteration1'})
 		
@@ -105,7 +105,7 @@ class Test(unittest.TestCase):
 		
 	def test_api_backlogs_empty(self):
 		from helper import Helper
-		Helper.get_backlogdir = Mock(return_value=os.path.join(root, 'test_data/empty/'))
+		Helper.get_backlog = Mock(return_value=os.path.join(root, 'test_data', 'empty'))
 		
 		res = self.app.post('/api/backlogs', {'milestone': 'Iteration1'})
 		
@@ -124,14 +124,14 @@ class Test(unittest.TestCase):
 		Trac.get_team_members = Mock(return_value=['admin'])
 		Trac.get_milestones = Mock(return_value=['milestone1'])
 		Trac.get_components = Mock(return_value=['component1'])
-		Helper.get_backlogdir = Mock(return_value=os.path.join(root,'test_data/create_backlog/'))
+		Helper.get_backlog = Mock(return_value=os.path.join(root,'test_data', 'create_backlog', 'none.csv'))
 		
 		res = self.app.post('/backlog')
 		
 		assert res.status == '302 Found'
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
-		assert os.path.getsize(os.path.join(root, 'test_data/create_backlog/none.csv')) == 34
+		assert os.path.getsize(os.path.join(root, 'test_data', 'create_backlog', 'none.csv')) == 34
 				
 	def test_burndown(self):
 		res = self.app.get('/burndown')

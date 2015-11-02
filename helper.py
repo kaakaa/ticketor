@@ -1,9 +1,10 @@
+import os
 from datetime import datetime,timedelta
 
 class Helper:
 	@staticmethod
-	def get_backlogdir(root):
-		return root + '/data/backlog/'
+	def get_backlog(root, file):
+		return os.path.join(root, 'data', 'backlog', file)
 	@staticmethod
 	def get_archivedir(root):
 		return root + '/data/archives/'
