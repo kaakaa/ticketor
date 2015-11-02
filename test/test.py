@@ -162,5 +162,10 @@ class Test(unittest.TestCase):
 		
 		assert os.path.getsize(os.path.join(root, 'test_data/test_archives/test.json')) == 97
 
+def suite():
+	suite = unittest.TestSuite()
+	suite.addTests(unittest.makeSuite(Test))
+	return suite
+
 if __name__ == '__main__':
 	print unittest.main()
