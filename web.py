@@ -5,6 +5,7 @@ import os, sys
 import urllib2
 from datetime import datetime, timedelta
 from bottle import *
+from helper import Helper
 
 rootdir = os.path.abspath('.')
 TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
@@ -92,7 +93,6 @@ def update():
 @route('/api/archives')
 def api_archives():
     files = sorted(glob.glob(rootdir + '/data/archives/*.json'), reverse=True)
-
     def read_json(file):
         with open(file) as fp:
             return json.load(fp)
@@ -108,17 +108,11 @@ def archives():
     response.content_type = 'text/html; charset=UTF-8'
     return dict(archives=body)
 
-@route('/burndown')
-@view('burndown')
-def burn():
-    response.content_type = 'text/html; charset=UTF-8'
-    return dict(data=[], milestones = trac_server.get_milestones())
-
 @route('/api/backlogs', method='post')
 def api_backlogs():
     ms = request.forms.get('milestone', '_')
     data = []
-    backlog = rootdir + '/data/backlog/' + ms + '.csv'
+    backlog = Helper.get_backlogdir(rootdir) + ms + '.csv'
     if os.path.exists(backlog):
         with open(backlog, 'r') as f:
             reader = csv.reader(f)
@@ -134,36 +128,7 @@ def api_backlogs():
     response.status = 200
     response.content_type = 'application/json'
     return {'result': data}
-    
-@route('/burndown', method='post')
-@view('burndown')
-def burndown():
-    body = api_backlogs()['result']
-    response.content_type = 'text/html; charset=UTF-8'
-    return dict(data=body, milestones = trac_server.get_milestones())
 
-def daterange(start, end):
-    dates = []
-    for n in range((end - start).days):
-        dates.append(start + timedelta(n))
-    return dates
-
-def calculate_backlog(tickets, member, daterange):
-    my_tickets = [t for t in tickets if t['reporter'] == member]    
-    backlogs = {}
-    for date in daterange:
-        sum_point = sum([int(t['point']) for t in my_tickets if t.has_key('due_assign') and t['due_assign'] == date])
-        backlogs[date] = str(sum_point)
-    
-    burndown = {}
-    point = sum([int(v) for v in backlogs.values()])
-    all_point = point
-    for k,v in sorted(backlogs.items()):
-        point -= int(v)
-        burndown[k] = str(point)
-    burndown['Start'] = str(all_point)
-    return burndown
-        
 @route('/backlog', method='post')
 def backlog():
     import search_ticket
@@ -172,10 +137,10 @@ def backlog():
     ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
     
-    start = datetime.strptime(request.forms.get('start', '2015/10/20'), '%Y/%m/%d')
-    end = datetime.strptime(request.forms.get('end', '2015/10/31'), '%Y/%m/%d')
+    start = datetime.strptime(request.forms.get('start', '2000/01/01'), '%Y/%m/%d')
+    end = datetime.strptime(request.forms.get('end', '2000/01/02'), '%Y/%m/%d')
 
-    dates = map(lambda d: d.strftime('%Y/%m/%d'), daterange(start, end))
+    dates = map(lambda d: d.strftime('%Y/%m/%d'), Helper.daterange(start, end))
     result = []
     for member in trac_server.get_team_members():
         backlogs = calculate_backlog(tickets, member, dates)
@@ -189,12 +154,25 @@ def backlog():
     
     result.insert(0, dates)
     
-    file = rootdir + '/data/backlog/' + request.forms.get('milestone', 'none') + '.csv'
+    file = Helper.get_backlogdir(rootdir) + request.forms.get('milestone', 'none') + '.csv'
     with open(file, 'w') as fp:
         for col in result:
             fp.write(','.join(col))
             fp.write('\n')
     redirect('/burndown')
+    
+@route('/burndown')
+@view('burndown')
+def burn():
+    response.content_type = 'text/html; charset=UTF-8'
+    return dict(data=[], milestones = trac_server.get_milestones())
+
+@route('/burndown', method='post')
+@view('burndown')
+def burndown():
+    body = api_backlogs()['result']
+    response.content_type = 'text/html; charset=UTF-8'
+    return dict(data=body, milestones = trac_server.get_milestones())
 
 
 @route('/regist', method='post')
