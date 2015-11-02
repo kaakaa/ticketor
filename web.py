@@ -136,14 +136,14 @@ def backlog():
     
     ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
-    
+
     start = datetime.strptime(request.forms.get('start', '2000/01/01'), '%Y/%m/%d')
     end = datetime.strptime(request.forms.get('end', '2000/01/02'), '%Y/%m/%d')
 
     dates = map(lambda d: d.strftime('%Y/%m/%d'), Helper.daterange(start, end))
     result = []
     for member in trac_server.get_team_members():
-        backlogs = calculate_backlog(tickets, member, dates)
+        backlogs = Helper.calculate_backlog(tickets, member, dates)
         backlogs_csv = [member, backlogs['Start']]
         for d in sorted(dates):
             backlogs_csv.append(backlogs[d])
@@ -184,8 +184,7 @@ def regist():
         # Output archive file
         now = datetime.now()
         result = { "Date": now.strftime("%Y/%m/%d %H:%M:%S"), "Title": str(request.forms.get("title")), "Link": trac_server.get_ticket_link(ticket_id)}
-        filename = now.strftime("%Y%m%d%H%M%S") + ".json"
-        with open(os.path.abspath(rootdir + '/data/archives/' + filename), 'w') as fp:
+        with open(os.path.abspath(Helper.get_archivedir(rootdir) + Helper.get_archive_filename(now)), 'w') as fp:
             json.dump(result, fp)
         
         redirect('/archives', 303)
