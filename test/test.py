@@ -131,6 +131,7 @@ class Test(unittest.TestCase):
 		assert res.status == '302 Found'
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
+		print os.path.getsize(os.path.join(root, 'test_data', 'create_backlog', 'none.csv'))
 		assert os.path.getsize(os.path.join(root, 'test_data', 'create_backlog', 'none.csv')) == 34
 				
 	def test_burndown(self):
