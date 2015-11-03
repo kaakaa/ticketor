@@ -108,23 +108,42 @@ def archives():
     response.content_type = 'text/html; charset=UTF-8'
     return dict(archives=body)
 
+def read_backlogs(backlog, member):
+    result = []
+    with open(backlog, 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row[0] == member:
+                buf = []
+                for e in row:
+                    if e.isdigit():
+                        buf.append(int(e))
+                    else:
+                        buf.append(e)
+                result.append(buf)
+    return result
+
 @route('/api/backlogs', method='post')
 def api_backlogs():
     ms = request.forms.get('milestone', '_')
+    member = request.forms.get('member', '_')
     data = []
-    backlog = Helper.get_backlog(rootdir, ms + '.csv')
+    
+    backlog = Helper.get_backlog(rootdir, ms + '_estimated.csv')
     if os.path.exists(backlog):
-        with open(backlog, 'r') as f:
-            reader = csv.reader(f)
-            for row in reader:
-               buf = []
-               for e in row:
-                   if e.isdigit():
-                       buf.append(int(e))
-                   else:
-                       buf.append(e)
-               data.append(buf)
-               
+        header = read_backlogs(backlog, 'Date')
+        data += header
+        burndown = read_backlogs(backlog, member)[0]
+        burndown[0] = member + ' - Estimated'
+        data.append(burndown)
+    
+    backlog = Helper.get_backlog(rootdir, ms + '_actual.csv')
+    if os.path.exists(backlog):
+        burndown = read_backlogs(backlog, member)[0]
+        burndown[0] = member + ' - Actual'
+        data.append(burndown)
+    
+    print data
     response.status = 200
     response.content_type = 'application/json'
     return {'result': data}
@@ -193,15 +212,18 @@ def backlog():
 @view('burndown')
 def burn():
     response.content_type = 'text/html; charset=UTF-8'
-    return dict(data=[], milestones = trac_server.get_milestones())
+    return dict(data=[], 
+        milestones = trac_server.get_milestones(),
+        members = trac_server.get_team_members())
 
 @route('/burndown', method='post')
 @view('burndown')
 def burndown():
     body = api_backlogs()['result']
     response.content_type = 'text/html; charset=UTF-8'
-    return dict(data=body, milestones = trac_server.get_milestones())
-
+    return dict(data=body, 
+        milestones = trac_server.get_milestones(),
+        members = trac_server.get_team_members())
 
 @route('/regist', method='post')
 def regist():

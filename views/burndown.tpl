@@ -15,6 +15,16 @@
             %end
           </select>
         </div>
+        <div class="form-group col-md-6">
+          <label for="milestone">ユーザー: </label>
+          <select class="form-control" name="member" id="member">
+            <option></option>
+            <option>ALL</option>
+            %for m in members:
+              <option>{{m}}</option>
+            %end
+          </select>
+        </div>
       </div>
       <div class="form-group">
         <button type="submit" class="btn btn-primary">View</button>
@@ -45,8 +55,8 @@
             },
             "useMarker": "css-ring",
             "markerWidth": 12,
-            "width": 960,
-            "height": 540
+            "width": 1080,
+            "height": 640
           },
       
           "data": {{!data}}
