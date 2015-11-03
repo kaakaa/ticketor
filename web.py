@@ -146,11 +146,15 @@ def backlog():
         backlogs = Helper.calculate_burndown(tickets, member, dates)
         result.append(backlogs)
         
+    # Calculate All Member's burndown
+    all_member = [str(sum([int(per_member[daily]) for per_member in result])) for daily in range(1, len(result[0]))]
+    all_member.insert(0, 'ALL')
+    result.append(all_member)
+    
     dates.insert(0, 'Date')
     dates.insert(1, 'Start')
     
     result.insert(0, dates)
-    
     file = Helper.get_backlog(rootdir, request.forms.get('milestone', 'none') + '.csv')
     with open(file, 'w') as fp:
         for col in result:
