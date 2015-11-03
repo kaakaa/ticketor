@@ -143,7 +143,6 @@ def api_backlogs():
         burndown[0] = member + ' - Actual'
         data.append(burndown)
     
-    print data
     response.status = 200
     response.content_type = 'application/json'
     return {'result': data}
