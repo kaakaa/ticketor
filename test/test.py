@@ -95,13 +95,13 @@ class Test(unittest.TestCase):
 		
 	def test_api_backlogs(self):
 		from helper import Helper
-		Helper.get_backlog = Mock(return_value=os.path.join(root, 'test_data', 'backlog', 'Iteration1.csv'))
+		Helper.get_backlog = Mock(return_value=os.path.join(root, 'test_data', 'backlog', 'Iteration1_estimated.csv'))
 		
-		res = self.app.post('/api/backlogs', {'milestone': 'Iteration1'})
+		res = self.app.post('/api/backlogs', {'milestone': 'Iteration1', 'member': 'ALL'})
 		
 		assert res.status == '200 OK'
 		assert res.headers['Content-Type'] == 'application/json'
-		assert res.body == '{"result": [["Date", "Start", "2015/10/20", "2015/10/21", "2015/10/22", "2015/10/23", "2015/10/24", "2015/10/25", "2015/10/26", "2015/10/27", "2015/10/28", "2015/10/29", "2015/10/30"], ["admin", 78, 78, 69, 69, 68, 68, 56, 40, 40, 40, 0, 0], ["guest", 34, 34, 34, 34, 34, 34, 28, 20, 20, 20, 0, 0]]}'
+		assert res.body == '{"result": [["Date", "Start", "2015/10/20", "2015/10/21", "2015/10/22", "2015/10/23", "2015/10/24", "2015/10/25", "2015/10/26", "2015/10/27", "2015/10/28", "2015/10/29", "2015/10/30", "2015/10/31"], ["ALL - Estimated", 112, 112, 103, 103, 102, 102, 84, 60, 60, 60, 0, 0, 0], ["ALL - Actual", 112, 112, 103, 103, 102, 102, 84, 60, 60, 60, 0, 0, 0]]}'
 		
 	def test_api_backlogs_empty(self):
 		from helper import Helper
@@ -116,11 +116,13 @@ class Test(unittest.TestCase):
 	def test_backlog(self):
 		from search_ticket import SearchTicket
 		from get_ticket import GetTicket
+		from changelog_ticket import ChangeLogTicket
 		from trac import Trac
 		from helper import Helper
 		
 		SearchTicket.search_ticket = Mock(return_value=[1])
 		GetTicket.get_ticket = Mock(return_value=[{'id': 2, 'summary': 'test2', 'reporter': 'admin', 'due_assign': '2000/01/01', 'point': '5'}, {'id': 1, 'summary': 'test1', 'reporter': 'guest', 'due_assign': '2000/01/01', 'point': '5'}])
+		ChangeLogTicket.get_changelog = Mock(return_value=[{'id': 2, 'member': 'admin', 'datetime': '2000/01/01'}, {'id': 1, 'member': 'guest', 'datetime': '2000/01/01', 'member': 'admin'}])
 		Trac.get_team_members = Mock(return_value=['admin'])
 		Trac.get_milestones = Mock(return_value=['milestone1'])
 		Trac.get_components = Mock(return_value=['component1'])
