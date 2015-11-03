@@ -20,13 +20,16 @@ class Helper:
 		return map(lambda d: d.strftime('%Y/%m/%d'), dates)
 		
 	@staticmethod
-	def calculate_backlog(tickets, member, daterange):
+	def calculate_backlog(tickets, member, daterange, date_field):
 		my_tickets = [t for t in tickets if t['reporter'] == member]
 		backlogs = {}
 		for date in daterange:
-			sum_point = sum([int(t['point']) for t in my_tickets if t.has_key('due_assign') and t['due_assign'] == date])
+			sum_point = sum([int(t['point']) for t in my_tickets if t.has_key(date_field) and t[date_field] == date])
 			backlogs[date] = str(sum_point)
+		return backlogs
 
+	@staticmethod
+	def calculate_burndown_estimated(backlogs):
 		burndown = {}
 		point = sum([int(v) for v in backlogs.values()])
 		all_point = point
@@ -38,11 +41,38 @@ class Helper:
 		return burndown
 		
 	@staticmethod
-	def calculate_burndown(tickets, member, daterange):
+	def calculate_data(tickets, member, daterange):
 		from helper import Helper
 		
-		backlogs = Helper.calculate_backlog(tickets, member, daterange)
-		csv = [member, backlogs['Start']]
+		backlogs = Helper.calculate_backlog(tickets, member, daterange, 'due_assign')
+		burndown = Helper.calculate_burndown_estimated(backlogs)
+		
+		csv = [member, burndown['Start']]
 		for d in sorted(daterange):
-			csv.append(backlogs[d])
+			csv.append(burndown[d])
 		return csv
+	
+	@staticmethod
+	def calculate_burndown_actual(backlogs, total_point):
+		burndown = {}
+		point = int(total_point)
+		for k,v in sorted(backlogs.items()):
+			point -= int(v)
+			burndown[k] = str(point)
+			
+		burndown['Start'] = str(total_point)
+		return burndown
+		
+		
+	@staticmethod
+	def calculate_data_actual(tickets, member, daterange, total_point):
+		from helper import Helper
+		
+		backlogs = Helper.calculate_backlog(tickets, member, daterange, 'closed')
+		burndown = Helper.calculate_burndown_actual(backlogs, total_point)
+		
+		csv = [member, burndown['Start']]
+		for d in sorted(daterange):
+			csv.append(burndown[d])
+		return csv
+	

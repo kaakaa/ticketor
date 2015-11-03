@@ -129,8 +129,10 @@ def api_backlogs():
     response.content_type = 'application/json'
     return {'result': data}
 
+
 @route('/backlog', method='post')
 def backlog():
+    # Report Ticket
     import search_ticket
     import get_ticket
     
@@ -141,9 +143,10 @@ def backlog():
     end = datetime.strptime(request.forms.get('end', '2000/01/02'), '%Y/%m/%d')
 
     dates = Helper.daterange(start, end)
+    header = ['Date', 'Start'] + dates
     result = []
     for member in trac_server.get_team_members():
-        backlogs = Helper.calculate_burndown(tickets, member, dates)
+        backlogs = Helper.calculate_data(tickets, member, dates)
         result.append(backlogs)
         
     # Calculate All Member's burndown
@@ -151,15 +154,39 @@ def backlog():
     all_member.insert(0, 'ALL')
     result.append(all_member)
     
-    dates.insert(0, 'Date')
-    dates.insert(1, 'Start')
-    
-    result.insert(0, dates)
-    file = Helper.get_backlog(rootdir, request.forms.get('milestone', 'none') + '.csv')
+    result.insert(0, header)
+    file = Helper.get_backlog(rootdir, request.forms.get('milestone', 'none') + '_estimated.csv')
     with open(file, 'w') as fp:
         for col in result:
             fp.write(','.join(col))
             fp.write('\n')
+
+    # Closing Ticket
+    import changelog_ticket
+    change_ticket = changelog_ticket.ChangeLogTicket().get_changelog(trac_server, ticket_ids)
+    close_burndown = []
+    for member in trac_server.get_team_members():
+        owned_logs = [t for t in change_ticket if t.has_key('member') and t['member'] == member]
+        closed_ticket = []
+        for ol in owned_logs:
+            t = next((t for t in tickets if ol['id'] == t['id']), None)
+            if t is not None:
+                t['closed'] = ol['datetime']
+                closed_ticket.append(t)
+        close_burndown.append(Helper.calculate_data_actual(closed_ticket, member, dates, next((r for r in result if r[0] == member))[1]))
+
+    # Calculate All Member's burndown
+    all_member = [str(sum([int(per_member[daily]) for per_member in close_burndown])) for daily in range(1, len(close_burndown[0]))]
+    all_member.insert(0, 'ALL')
+    close_burndown.append(all_member)
+    
+    close_burndown.insert(0, header)
+    file = Helper.get_backlog(rootdir, request.forms.get('milestone', 'none') + '_actual.csv')
+    with open(file, 'w') as fp:
+        for col in close_burndown:
+            fp.write(','.join(col))
+            fp.write('\n')
+
     redirect('/burndown')
     
 @route('/burndown')
