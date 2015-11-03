@@ -138,6 +138,7 @@ class Test(unittest.TestCase):
 			size = 43
 		else:
 			size = 41
+		print os.path.getsize(os.path.join(root, 'test_data', 'create_backlog', 'none.csv'))
 		assert os.path.getsize(os.path.join(root, 'test_data', 'create_backlog', 'none.csv')) == size
 				
 	def test_burndown(self):
