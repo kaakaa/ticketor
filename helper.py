@@ -17,16 +17,16 @@ class Helper:
 		dates = []
 		for n in range((end - start).days):
 			dates.append(start + timedelta(n))
-		return dates
+		return map(lambda d: d.strftime('%Y/%m/%d'), dates)
 		
 	@staticmethod
 	def calculate_backlog(tickets, member, daterange):
-		my_tickets = [t for t in tickets if t['reporter'] == member]    
+		my_tickets = [t for t in tickets if t['reporter'] == member]
 		backlogs = {}
 		for date in daterange:
 			sum_point = sum([int(t['point']) for t in my_tickets if t.has_key('due_assign') and t['due_assign'] == date])
 			backlogs[date] = str(sum_point)
-		
+
 		burndown = {}
 		point = sum([int(v) for v in backlogs.values()])
 		all_point = point
@@ -36,3 +36,13 @@ class Helper:
 			
 		burndown['Start'] = str(all_point)
 		return burndown
+		
+	@staticmethod
+	def calculate_burndown(tickets, member, daterange):
+		from helper import Helper
+		
+		backlogs = Helper.calculate_backlog(tickets, member, daterange)
+		csv = [member, backlogs['Start']]
+		for d in sorted(daterange):
+			csv.append(backlogs[d])
+		return csv

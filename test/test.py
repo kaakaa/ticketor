@@ -164,7 +164,12 @@ class Test(unittest.TestCase):
 
 def suite():
 	suite = unittest.TestSuite()
+	
 	suite.addTests(unittest.makeSuite(Test))
+	
+	from helper_test import HelperTest
+	suite.addTests(unittest.makeSuite(HelperTest))
+	
 	return suite
 
 if __name__ == '__main__':

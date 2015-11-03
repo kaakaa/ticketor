@@ -113,7 +113,6 @@ def api_backlogs():
     ms = request.forms.get('milestone', '_')
     data = []
     backlog = Helper.get_backlog(rootdir, ms + '.csv')
-    print backlog
     if os.path.exists(backlog):
         with open(backlog, 'r') as f:
             reader = csv.reader(f)
@@ -141,14 +140,11 @@ def backlog():
     start = datetime.strptime(request.forms.get('start', '2000/01/01'), '%Y/%m/%d')
     end = datetime.strptime(request.forms.get('end', '2000/01/02'), '%Y/%m/%d')
 
-    dates = map(lambda d: d.strftime('%Y/%m/%d'), Helper.daterange(start, end))
+    dates = Helper.daterange(start, end)
     result = []
     for member in trac_server.get_team_members():
-        backlogs = Helper.calculate_backlog(tickets, member, dates)
-        backlogs_csv = [member, backlogs['Start']]
-        for d in sorted(dates):
-            backlogs_csv.append(backlogs[d])
-        result.append(backlogs_csv)
+        backlogs = Helper.calculate_burndown(tickets, member, dates)
+        result.append(backlogs)
         
     dates.insert(0, 'Date')
     dates.insert(1, 'Start')
