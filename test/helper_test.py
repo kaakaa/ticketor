@@ -43,7 +43,7 @@ class HelperTest(unittest.TestCase):
 		
 		assert range == []
 	
-	def test_calculate_backlog(self):
+	def test_calculate_data(self):
 		daterange = ['2015/10/01', '2015/10/02']
 		member = 'admin'
 
@@ -52,11 +52,11 @@ class HelperTest(unittest.TestCase):
 			'due_assign': '2015/10/01',
 			'point': '1'}]
 		
-		backlog = Helper.calculate_backlog(tickets, member, daterange)
+		backlog = Helper.calculate_data(tickets, member, daterange)
 		
-		assert backlog == {'Start': '1', '2015/10/01': '0', '2015/10/02': '0'}
+		assert backlog == ['admin', '1', '0', '0']
 		
-	def test_calculate_backlog_multiticket(self):
+	def test_calculate_data_multiticket(self):
 		start = datetime.strptime('2015/10/1', '%Y/%m/%d')
 		end = datetime.strptime('2015/10/3', '%Y/%m/%d')
 		daterange = ['2015/10/01', '2015/10/02']
@@ -84,11 +84,10 @@ class HelperTest(unittest.TestCase):
 				'point': '8'
 			}]
 		
-		backlog = Helper.calculate_backlog(tickets, member, daterange)
+		backlog = Helper.calculate_data(tickets, member, daterange)
+		assert backlog == ['admin', '15', '5', '0']
 		
-		assert backlog == {'Start': '15', '2015/10/01': '5', '2015/10/02': '0'}
-		
-	def test_calculate_backlog_empty(self):
+	def test_calculate_data_empty(self):
 		start = datetime.strptime('2015/10/1', '%Y/%m/%d')
 		end = datetime.strptime('2015/10/3', '%Y/%m/%d')
 		daterange = ['2015/10/01', '2015/10/02']
@@ -96,11 +95,11 @@ class HelperTest(unittest.TestCase):
 
 		tickets = []
 		
-		backlog = Helper.calculate_backlog(tickets, member, daterange)
+		backlog = Helper.calculate_data(tickets, member, daterange)
 		
-		assert backlog == {'Start': '0', '2015/10/01': '0', '2015/10/02': '0'}
+		assert backlog == ['admin', '0', '0', '0']
 		
-	def test_calculate_backlog_noassign(self):
+	def test_calculate_data_noassign(self):
 		start = datetime.strptime('2015/10/1', '%Y/%m/%d')
 		end = datetime.strptime('2015/10/3', '%Y/%m/%d')
 		daterange = ['2015/10/01', '2015/10/02']
@@ -118,9 +117,9 @@ class HelperTest(unittest.TestCase):
 				'point': '5'
 			}]
 		
-		backlog = Helper.calculate_backlog(tickets, member, daterange)
+		backlog = Helper.calculate_data(tickets, member, daterange)
 		
-		assert backlog == {'Start': '0', '2015/10/01': '0', '2015/10/02': '0'}
+		assert backlog == ['admin', '0', '0', '0']
 		
 if __name__ == '__main__':
 	print unittest.main()
