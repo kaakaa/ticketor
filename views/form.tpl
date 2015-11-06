@@ -10,11 +10,11 @@
   <hr>
   
   <div class="container">
-    <form role="form" action="/regist" method="post">
+    <form role="form" data-toggle="validator" action="/regist" method="post">
       <div class="row">
         <div class="form-group col-md-8">
           <label for="title">タイトル:</label>
-          <input type="text" class="form-control" name="title" id="title">
+          <input type="text" class="form-control" name="title" id="title" required>
         </div>
       </div>
       <div class="form-group">
