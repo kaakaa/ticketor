@@ -258,5 +258,5 @@ def initialize():
 
 if __name__ == '__main__':
     initialize()
-    run(host="0.0.0.0", port="8081",debug=True)
+    run(host="0.0.0.0", port="8081")
     # daemon_run(host='0.0.0.0', port="5200", pidfile=(rootdir + '/daemon/bottle.pid'), logfile=(rootdir + '/daemon/bottle.log'))
