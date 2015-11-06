@@ -43,20 +43,23 @@
       <script>
         var chartdata2 = {
           "config": {
-            "title": "Burndown Chart",
+            "title": "Burndown Chart - {{member}}",
             "subTitle": "ccchartを使ったバーンダウンチャート",
+            "bg": "white",
+            "textColor": "black",
+            "useShadow": "no",
             "type": "line",
             "lineWidth": 4,
-            "colorSet": ["red","#FF9114","#3CB000","#00A8A2","#0036C0","#C328FF","#FF34C0"],
-            "bgGradient": {
-              "direction":"vertical",
-              "from":"#687478",
-              "to":"#222222"
-            },
             "useMarker": "css-ring",
             "markerWidth": 12,
+            "colorSet": ["rgba(255,0,128,0.3)","red","#3CB000","#00A8A2","#0036C0","#C328FF","#FF34C0"],
+            "useVal": "yes",
+            "valFont": ["100 18px 'Arial'","100 18px 'Arial'"],
+            "valYOffset": [30, -30],
+            "unit": "Point",
             "width": 1080,
-            "height": 640
+            "height": 640,
+            "paddingTop": 150
           },
       
           "data": {{!data}}

@@ -136,13 +136,13 @@ def api_backlogs():
         header = read_backlogs(backlog, 'Date')
         data += header
         burndown = read_backlogs(backlog, member)[0]
-        burndown[0] = member + ' - Estimated'
+        burndown[0] = 'Estimated'
         data.append(burndown)
     
     backlog = Helper.get_backlog(rootdir, ms + '_actual.csv')
     if os.path.exists(backlog):
         burndown = read_backlogs(backlog, member)[0]
-        burndown[0] = member + ' - Actual'
+        burndown[0] = 'Actual'
         data.append(burndown)
     
     response.status = 200
@@ -224,7 +224,8 @@ def burndown():
     response.content_type = 'text/html; charset=UTF-8'
     return dict(data=body, 
         milestones = trac_server.get_milestones(),
-        members = trac_server.get_team_members())
+        members = trac_server.get_team_members(),
+        member = request.forms.get('member', '_'))
 
 @route('/regist', method='post')
 def regist():
