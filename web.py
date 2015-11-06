@@ -12,10 +12,12 @@ TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
 
 sys.path.append('rpc')
 
-
 app = default_app()
 trac_server = trac.Trac()
 
+@error(500)
+def custom500(error):
+    return tob(template('error', message=error.traceback))
 
 ## Static files 
 
@@ -256,5 +258,5 @@ def initialize():
 
 if __name__ == '__main__':
     initialize()
-    run(host="0.0.0.0", port="8081")
+    run(host="0.0.0.0", port="8081",debug=True)
     # daemon_run(host='0.0.0.0', port="5200", pidfile=(rootdir + '/daemon/bottle.pid'), logfile=(rootdir + '/daemon/bottle.log'))

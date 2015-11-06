@@ -69,7 +69,7 @@
   
   <div class="container">
     %if len(tickets) != 0:
-      <form role="form" action="/update" method="post">
+      <form role="form" action="/update" method="post" data-toggle="validator">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -92,7 +92,10 @@
           <tbody>
             %for ticket in tickets:
               <tr>
-                <td><label><input type="checkbox" class="check_id" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input></label></td>
+                <td><label>
+                %if ticket.has_key('id'):
+                  <input type="checkbox" class="check_id" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input>
+                </label></td>
                 <td>{{ticket.get('summary', '-')}}</td>
                 <td>{{ticket.get('reporter','-')}}</td>
                 <td>{{ticket.get('due_assign', '-')}}</td>
