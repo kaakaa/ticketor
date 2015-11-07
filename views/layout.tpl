@@ -34,8 +34,8 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Trac<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Top</a></li>
-                <li><a href="#">Kanban</a></li>
+                <li><a href="{{get_trac_home()}}">Top</a></li>
+                <li><a href="{{get_kanban_home()}}">Kanban</a></li>
               </ul>
             </li>
           </ul>

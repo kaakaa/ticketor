@@ -9,12 +9,13 @@ from helper import Helper
 
 rootdir = os.path.abspath('.')
 TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
-
 sys.path.append('rpc')
 
-app = default_app()
 trac_server = trac.Trac()
-
+app = default_app()
+BaseTemplate.defaults['get_trac_home'] = trac_server.get_trac_home
+BaseTemplate.defaults['get_kanban_home'] = trac_server.get_kanban_home
+ 
 @error(500)
 def custom500(error):
     return tob(template('error', message=error.traceback))

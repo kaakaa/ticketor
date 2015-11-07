@@ -80,3 +80,7 @@ class Trac:
 		return self.milestones
 	def get_components(self):
 		return self.components
+	def get_trac_home(self):
+		return  "http://%s%s/trac/%s" % (self.host, self.port, self.project_name)
+	def get_kanban_home(self):
+		return "http://%s%s/trac/%s/kanban" % (self.host, self.port, self.project_name)
