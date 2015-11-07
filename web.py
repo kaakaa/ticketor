@@ -15,6 +15,9 @@ trac_server = trac.Trac()
 app = default_app()
 BaseTemplate.defaults['get_trac_home'] = trac_server.get_trac_home
 BaseTemplate.defaults['get_kanban_home'] = trac_server.get_kanban_home
+BaseTemplate.defaults['get_team_members'] = trac_server.get_team_members
+BaseTemplate.defaults['get_milestones'] = trac_server.get_milestones
+BaseTemplate.defaults['get_components'] = trac_server.get_components
  
 @error(500)
 def custom500(error):
@@ -45,19 +48,14 @@ def index():
     redirect('/form')
 
 @route('/form')
+@view('form')
 def form():
-    return template('form',
-        members    = trac_server.get_team_members(),
-        milestones = trac_server.get_milestones(),
-        components = trac_server.get_components())
+    return {}
 
 @route('/update')
+@view('update')
 def update():
-    return template('update',
-        members    = trac_server.get_team_members(),
-        milestones = trac_server.get_milestones(),
-        components = trac_server.get_components(),
-        tickets    = [])
+    return dict(tickets = [])
 
 @route('/api/search', method='post')
 def api_search():
@@ -69,10 +67,7 @@ def api_search():
     
     response.status = 200
     response.content_type = 'application/json'
-    return {'result': dict(members = trac_server.get_team_members(),
-        milestones = trac_server.get_milestones(),
-        components = trac_server.get_components(),
-        tickets    = sorted(tickets, key=lambda t: t.get('id')))}
+    return {'result': dict(tickets = sorted(tickets, key=lambda t: t.get('id')))}
 
 @route('/search', method='post')
 @view('update')
@@ -82,16 +77,12 @@ def view_search():
     return body
 
 @route('/update', method='post')
+@view('update')
 def update():
     import update_ticket
     
     tickets = update_ticket.UpdateTicket().update_ticket(trac_server, request.forms)
-    return template('update',
-        members    = trac_server.get_team_members(),
-        milestones = trac_server.get_milestones(),
-        components = trac_server.get_components(),
-        tickets    = sorted(tickets, key=lambda t: t.get('id')))
-    
+    return dict(tickets = sorted(tickets, key=lambda t: t.get('id')))
 
 @route('/api/archives')
 def api_archives():
@@ -214,19 +205,14 @@ def backlog():
 @view('burndown')
 def burn():
     response.content_type = 'text/html; charset=UTF-8'
-    return dict(data=[], 
-        milestones = trac_server.get_milestones(),
-        members = trac_server.get_team_members())
+    return dict(data=[])
 
 @route('/burndown', method='post')
 @view('burndown')
 def burndown():
     body = api_backlogs()['result']
     response.content_type = 'text/html; charset=UTF-8'
-    return dict(data=body, 
-        milestones = trac_server.get_milestones(),
-        members = trac_server.get_team_members(),
-        member = request.forms.get('member', '_'))
+    return dict(data=body, member = request.forms.get('member', '_'))
 
 @route('/regist', method='post')
 def regist():

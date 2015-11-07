@@ -4,7 +4,7 @@
   <div class="container">
     <h1>Regist Team Task</h1>
     <p>チームメンバー全員に向けたタスクの登録<br>
-       ({{('/').join(members)}})</p>
+       ({{('/').join(get_team_members())}})</p>
   </div>
   
   <hr>
@@ -25,7 +25,7 @@
         <div class="form-group col-md-4">
           <label for="component">コンポーネント: </label>
           <select class="form-control" name="component" id="component">
-            %for ms in components:
+            %for ms in get_components():
               <option>{{ms}}</option>
             %end
           </select>
@@ -33,7 +33,7 @@
         <div class="form-group col-md-4">
           <label for="milestone">マイルストーン: </label>
           <select class="form-control" name="milestone" id="milestone">
-            %for ms in milestones:
+            %for ms in get_milestones():
               <option>{{ms}}</option>
             %end
           </select>

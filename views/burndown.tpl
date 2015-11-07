@@ -10,7 +10,7 @@
           <label for="milestone">マイルストーン: </label>
           <select class="form-control" name="milestone" id="milestone" required>
             <option></option>
-            %for ms in milestones:
+            %for ms in get_milestones():
               <option>{{ms}}</option>
             %end
           </select>
@@ -20,7 +20,7 @@
           <select class="form-control" name="member" id="member" required>
             <option></option>
             <option>ALL</option>
-            %for m in members:
+            %for m in get_team_members():
               <option>{{m}}</option>
             %end
           </select>

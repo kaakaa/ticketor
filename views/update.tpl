@@ -16,7 +16,7 @@
           <label for="member">報告者: </label>
           <select class="form-control" name="member" id="member">
             <option></option>
-            %for member in members:
+            %for member in get_team_members():
               <option>{{member}}</option>
             %end
           </select>
@@ -25,7 +25,7 @@
           <label for="owner">担当者: </label>
           <select class="form-control" name="owner" id="owner">
             <option></option>
-            %for member in members:
+            %for member in get_team_members():
               <option>{{member}}</option>
             %end
           </select>
@@ -36,7 +36,7 @@
           <label for="component">コンポーネント: </label>
           <select class="form-control" name="component" id="component">
             <option></option>
-            %for ms in components:
+            %for ms in get_components():
               <option>{{ms}}</option>
             %end
           </select>
@@ -45,7 +45,7 @@
           <label for="milestone">マイルストーン: </label>
           <select class="form-control" name="milestone" id="milestone">
             <option></option>
-            %for ms in milestones:
+            %for ms in get_milestones():
               <option>{{ms}}</option>
             %end
           </select>
@@ -95,6 +95,7 @@
                 <td><label>
                 %if ticket.has_key('id'):
                   <input type="checkbox" class="check_id" name="ticketid" value="{{ticket['id']}}">{{ticket['id']}}</input>
+                %end
                 </label></td>
                 <td>{{ticket.get('summary', '-')}}</td>
                 <td>{{ticket.get('reporter','-')}}</td>
@@ -113,7 +114,7 @@
             <label for="member">Member</label>
             <select class="form-control" name="targetuser" id="targetuser" required>
               <option></option>
-              %for member in members:
+              %for member in get_team_members():
               <option>{{member}}</option>
               %end
             </select>
