@@ -9,7 +9,7 @@ class Helper:
 	def get_archivedir(root):
 		return root + '/data/archives/'
 	@staticmethod
-	def get_arhive_filename(now):
+	def get_archive_filename(now):
 		return now.strftime("%Y%m%d%H%M%S") + ".json"
 	
 	@staticmethod

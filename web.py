@@ -216,9 +216,9 @@ def burndown():
 
 @route('/regist', method='post')
 def regist():
-    import create_ticket
+    from tracrpc import CreateTicket
     try:
-        ticket_id = create_ticket.CreateTicket().create_team_ticket(trac_server, request.forms)
+        ticket_id = CreateTicket.create_team_ticket(trac_server, request.forms)
 
         # Output archive file
         now = datetime.now()
