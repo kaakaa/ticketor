@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
 		assert res.status == '200 OK'
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
-	def test_api_serach(self):
+	def test_api_search(self):
 		from search_ticket import SearchTicket
 		from get_ticket import GetTicket
 		from trac import Trac
@@ -48,9 +48,7 @@ class Test(unittest.TestCase):
 		
 		import json
 		body = json.loads(res.body)['result']
-		assert body['members'] == ['admin']
-		assert body['milestones'] == ['milestone1']
-		assert body['components'] == ['component1']
+		print body
 		assert body['tickets'] == [{'id': 1, 'summary': 'test1'}, {'id': 2, 'summary': 'test2'}]
 
 	def test_search(self):
@@ -140,7 +138,7 @@ class Test(unittest.TestCase):
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
 	def test_regist(self):
-		from create_ticket import CreateTicket
+		from tracrpc import CreateTicket
 		from trac import Trac
 		from helper import Helper
 
