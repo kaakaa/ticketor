@@ -71,3 +71,36 @@ class CreateTicket(_TracRPC):
 		
 		return ticket_id
 
+
+
+class SearchTicket(_TracRPC):
+	@classmethod
+	def make_params(cls, forms):
+		non_empty_forms = dict((k, v) for k, v in forms.items() if len(v) != 0)
+		buf = []
+		if "member" in non_empty_forms:
+			buf.append("reporter=" + forms.get("member"))
+		if "owner" in non_empty_forms:
+			buf.append("owner=" + forms.get("owner"))
+		if "component" in non_empty_forms:
+			buf.append("component=" + forms.get("component"))
+		if "milestone" in non_empty_forms:
+			buf.append("milestone=" + forms.get("milestone"))
+		if "due_assign" in non_empty_forms:
+			buf.append("due_assign=" + forms.get("due_assign"))
+		if "due_close" in non_empty_forms:
+			buf.append("due_close=" + forms.get("due_close"))
+		if "max" in non_empty_forms:
+			buf.append("max=" + forms.get("max"))
+
+		return {
+			"params": [ "&".join(filter(None, buf))],
+			"method": "ticket.query"
+		}
+
+	@classmethod
+	def execute(cls, trac, forms):
+		json_params = cls.make_params(forms)
+		response = trac.callrpc(json_params)
+		return cls.format_response(response)
+

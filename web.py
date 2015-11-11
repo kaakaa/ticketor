@@ -59,10 +59,10 @@ def update():
 
 @route('/api/search', method='post')
 def api_search():
-    import search_ticket
+    from tracrpc import SearchTicket
     import get_ticket
     
-    ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
+    ticket_ids = SearchTicket.execute(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
     
     response.status = 200
@@ -145,10 +145,10 @@ def api_backlogs():
 @route('/backlog', method='post')
 def backlog():
     # Report Ticket
-    import search_ticket
+    from tracrpc import SearchTicket
     import get_ticket
     
-    ticket_ids = search_ticket.SearchTicket().search_ticket(trac_server, request.forms)
+    ticket_ids = SearchTicket.execute(trac_server, request.forms)
     tickets = get_ticket.GetTicket().get_ticket(trac_server, ticket_ids)
 
     start = datetime.strptime(request.forms.get('start', '2000/01/01'), '%Y/%m/%d')
