@@ -78,9 +78,9 @@ def view_search():
 @route('/update', method='post')
 @view('update')
 def update():
-	import update_ticket
+	from tracrpc import UpdateTicket
 	
-	tickets = update_ticket.UpdateTicket().update_ticket(trac_server, request.forms)
+	tickets = UpdateTicket.execute(trac_server, request.forms)
 	return dict(tickets = sorted(tickets, key=lambda t: t.get('id')))
 
 @route('/api/archives')

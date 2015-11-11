@@ -61,10 +61,10 @@ class Test(unittest.TestCase):
 		assert res.headers['Content-Type'] == 'text/html; charset=UTF-8'
 		
 	def test_update(self):
-		from update_ticket import UpdateTicket
+		from tracrpc import UpdateTicket
 		from trac import Trac
 		
-		UpdateTicket.update_ticket = Mock(return_value=[{'id': 2, 'summary': 'test2'}, {'id': 1, 'summary': 'test1'}])
+		UpdateTicket.execute = Mock(return_value=[{'id': 2, 'summary': 'test2'}, {'id': 1, 'summary': 'test1'}])
 		Trac.get_team_members = Mock(return_value=['admin'])
 		Trac.get_milestones = Mock(return_value=['milestone1'])
 		Trac.get_components = Mock(return_value=['component1'])

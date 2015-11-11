@@ -133,3 +133,34 @@ class GetTicket(_TracRPC):
 		
 		tickets = trac.callrpc_par(json_params_array)
 		return [cls.format_response(res_dict) for res_dict in tickets]
+
+
+class UpdateTicket(_TracRPC):
+	@classmethod
+	def make_params(cls, id, status, user):
+		return {
+			"params": [
+				int(id),
+				"Bulk status update",
+				{
+					"status": status,
+					"owner": user
+				}
+			],
+			"method": "ticket.update"
+		}
+		
+	@classmethod
+	def execute(cls, trac, forms):
+		user = forms.get('targetuser')
+		status = forms.get('status')
+		tickets = []
+		for id in forms.getall('ticketid'):
+			json_params = cls.make_params(id, status, user)
+			response = trac.callrpc(json_params)
+			ticket = cls.format_response(response)[3]
+			ticket[u'id'] = id
+			tickets.append(ticket)
+		
+		return tickets
+
