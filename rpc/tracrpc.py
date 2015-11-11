@@ -104,3 +104,32 @@ class SearchTicket(_TracRPC):
 		response = trac.callrpc(json_params)
 		return cls.format_response(response)
 
+
+class GetTicket(_TracRPC):
+	@classmethod
+	def make_params(cls, id):
+		return {
+			"params": [ int(id) ],
+			"method": "ticket.get"
+		}
+
+	@classmethod
+	def format_response(cls, res_dict):
+		id = res_dict['id']
+		response = res_dict['response']
+		res_json = json.loads(response)
+		if res_json['error'] is None:
+			result = res_json['result'][3]
+			result[u'id'] = id
+			return result
+		else:
+			raise urllib2.HTTPError(url='http://trac', code=500, msg=res_json['error'], hdrs={}, fp=None)
+
+	@classmethod
+	def execute(cls, trac, ids):
+		json_params_array = {}
+		for id in ids:
+			json_params_array[id] = (cls.make_params(id))
+		
+		tickets = trac.callrpc_par(json_params_array)
+		return [cls.format_response(res_dict) for res_dict in tickets]
