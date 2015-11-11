@@ -110,14 +110,13 @@ class Test(unittest.TestCase):
 		assert res.body == '{"result": []}'
 		
 	def test_backlog(self):
-		from tracrpc import SearchTicket, GetTicket
-		from changelog_ticket import ChangeLogTicket
+		from tracrpc import SearchTicket, GetTicket, ChangeLogTicket
 		from trac import Trac
 		from helper import Helper
 		
 		SearchTicket.execute = Mock(return_value=[1])
 		GetTicket.execute = Mock(return_value=[{'id': 2, 'summary': 'test2', 'reporter': 'admin', 'due_assign': '2000/01/01', 'point': '5'}, {'id': 1, 'summary': 'test1', 'reporter': 'guest', 'due_assign': '2000/01/01', 'point': '5'}])
-		ChangeLogTicket.get_changelog = Mock(return_value=[{'id': 2, 'member': 'admin', 'datetime': '2000/01/01'}, {'id': 1, 'member': 'guest', 'datetime': '2000/01/01', 'member': 'admin'}])
+		ChangeLogTicket.execute = Mock(return_value=[{'id': 2, 'member': 'admin', 'datetime': '2000/01/01'}, {'id': 1, 'member': 'guest', 'datetime': '2000/01/01', 'member': 'admin'}])
 		Trac.get_team_members = Mock(return_value=['admin'])
 		Trac.get_milestones = Mock(return_value=['milestone1'])
 		Trac.get_components = Mock(return_value=['component1'])

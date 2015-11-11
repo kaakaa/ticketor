@@ -172,8 +172,8 @@ def backlog():
 			fp.write('\n')
 
 	# Closing Ticket
-	import changelog_ticket
-	change_ticket = changelog_ticket.ChangeLogTicket().get_changelog(trac_server, ticket_ids)
+	from tracrpc import ChangeLogTicket
+	change_ticket = ChangeLogTicket.execute(trac_server, ticket_ids)
 	close_burndown = []
 	for member in trac_server.get_team_members():
 		owned_logs = [t for t in change_ticket if t.has_key('member') and t['member'] == member]
