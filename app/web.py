@@ -7,9 +7,9 @@ from datetime import datetime, timedelta
 from bottle import *
 from helper import Helper
 
-rootdir = os.path.abspath('.')
-TEMPLATE_PATH.insert(0, os.path.abspath('./views'))
-sys.path.append('rpc')
+rootdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATE_PATH.insert(0, os.path.join(rootdir, '..', 'views'))
+sys.path.append(os.path.join(rootdir, 'rpc'))
 
 trac_server = trac.Trac()
 app = default_app()
