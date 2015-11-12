@@ -2,8 +2,9 @@ from setuptools import setup, find_packages
 from pip.req import parse_requirements
 import sys
 
-sys.path.append('./rpc')
-sys.path.append('./test')
+sys.path.append('./app')
+sys.path.append('./app/rpc')
+sys.path.append('./app/test')
 
 install_reqs = parse_requirements('./requirements.txt', session=False)
 reqs = [str(ir.req) for ir in install_reqs]
