@@ -43,8 +43,8 @@
       <script>
         var chartdata2 = {
           "config": {
-            "title": "Burndown Chart - {{member}}",
-            "subTitle": "ccchartを使ったバーンダウンチャート",
+            "title": "Burndown Chart - {{team}} ({{member}})",
+            "subTitle": "ccchartによるバーンダウンチャート",
             "bg": "white",
             "textColor": "black",
             "useShadow": "no",

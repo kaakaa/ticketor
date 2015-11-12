@@ -10,6 +10,7 @@ class Trac:
 	host = None
 	port = None
 	project_name = None
+	team_name = None
 
 	jsonrpc_path = 'login/jsonrpc'
 	ticket_path = 'ticket/%s'
@@ -30,6 +31,7 @@ class Trac:
 		self.port = '' if len(self.port) == 0 else ':' + self.port
 
 		self.project_name = self.get_or_else(app, 'trac.project_name', 'SampleProject')
+		self.team_name = self.get_or_else(app, 'trac.team_name', '')
 		self.members = self.get_or_else(app, 'trac.team_members', [])
 
 		self.auth['user'] = self.get_or_else(app, 'trac.rpc.username', 'admin')
@@ -84,3 +86,5 @@ class Trac:
 		return  "http://%s%s/trac/%s" % (self.host, self.port, self.project_name)
 	def get_kanban_home(self):
 		return "http://%s%s/trac/%s/kanban" % (self.host, self.port, self.project_name)
+	def get_team_name(self):
+		return self.team_name

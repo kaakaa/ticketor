@@ -4,6 +4,7 @@
 		"host": "localhost",
 		"port": "8080",
 		"project_name": "SampleProject",
+		"team_name": "Sample Team",
 		"team_members": ["admin", "guest"],
 		"rpc":
 		{

@@ -210,7 +210,7 @@ def burn():
 def burndown():
 	body = api_backlogs()['result']
 	response.content_type = 'text/html; charset=UTF-8'
-	return dict(data=body, member = request.forms.get('member', '_'))
+	return dict(data=body, member = request.forms.get('member', '_'), team = trac_server.get_team_name())
 
 @route('/regist', method='post')
 def regist():
