@@ -1,1 +1,1 @@
-nohup python web.py > daemon/bottle.log &
+nohup python app/web.py > daemon/bottle.log &

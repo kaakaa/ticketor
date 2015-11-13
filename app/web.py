@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from bottle import *
 from helper import Helper
 
-rootdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+rootdir = os.path.dirname(os.path.abspath('./app/web.py'))
 TEMPLATE_PATH.insert(0, os.path.join(rootdir, '..', 'views'))
 sys.path.append(os.path.join(rootdir, 'rpc'))
 
@@ -27,19 +27,19 @@ def custom500(error):
 
 @route('/js/<filename>')
 def js_static(filename):
-	return static_file(filename, root=rootdir+'/public/js')
+	return static_file(filename, root=os.path.join(rootdir, '..', 'public/js'))
 
 @route('/css/<filename>')
 def css_static(filename):
-	return static_file(filename, root=rootdir+'/public/css')
+	return static_file(filename, root=os.path.join(rootdir, '..', 'public/css'))
 
 @route('/css/images/<filename>')
 def css_static(filename):
-	return static_file(filename, root=rootdir+'/public/css/images')
+	return static_file(filename, root=os.path.join(rootdir, '..', 'public/css/images'))
 
 @route('/fonts/<filename>')
 def fonts_static(filename):
-	return static_file(filename, root=rootdir+'/public/fonts')
+	return static_file(filename, root=os.path.join(rootdir, '..', 'public/fonts'))
 
 ## REST Phage
 
@@ -85,7 +85,7 @@ def update():
 
 @route('/api/archives')
 def api_archives():
-	files = sorted(glob.glob(rootdir + '/data/archives/*.json'), reverse=True)
+	files = sorted(glob.glob(os.path.join(rootdir, '..', 'data/archives/*.json')), reverse=True)
 	def read_json(file):
 		with open(file) as fp:
 			return json.load(fp)
@@ -238,10 +238,10 @@ def convert_keys_to_string(dictionary):
 		for k, v in dictionary.items())
 
 def initialize():
-	with open(rootdir + '/conf/config.json') as fp:
+	with open(os.path.join(rootdir, '..', 'conf/config.json')) as fp:
 		app.config.load_dict(convert_keys_to_string(json.load(fp)))
 	trac_server.initialize(app)
 
 if __name__ == '__main__':
 	initialize()
-	run(host="0.0.0.0", port="8081")
+	run(host="0.0.0.0", port="5200")

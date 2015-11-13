@@ -4,10 +4,10 @@ from datetime import datetime,timedelta
 class Helper:
 	@staticmethod
 	def get_backlog(root, file):
-		return os.path.join(root, 'data', 'backlog', file)
+		return os.path.join(root, '..', 'data', 'backlog', file)
 	@staticmethod
 	def get_archivedir(root):
-		return root + '/data/archives/'
+		return os.path.join(root, '..', 'data', 'archives')
 	@staticmethod
 	def get_archive_filename(now):
 		return now.strftime("%Y%m%d%H%M%S") + ".json"
@@ -24,8 +24,8 @@ class Helper:
 		my_tickets = [t for t in tickets if t['reporter'] == member]
 		backlogs = {}
 		for date in daterange:
-			sum_point = sum([int(t['point']) for t in my_tickets if t.has_key(date_field) and t[date_field] == date])
-			backlogs[date] = str(sum_point)
+			sum_point = sum([float(t['point']) for t in my_tickets if t.has_key(date_field) and t[date_field] == date])
+			backlogs[date] = str(int(sum_point))
 		return backlogs
 
 	@staticmethod
