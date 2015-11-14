@@ -147,7 +147,7 @@ class Trac:
 		return  "http://%s%s/trac/%s" % (self.host, self.port, self.project_name)
 	def get_kanban_home(self):
 		"""TracのカンバンページのURLを返す"""
-		return "http://%s%s/trac/%s/kanban" % (self.host, self.port, self.project_name)
+		return "http://%s%s/trac/wiki/%s/kanban" % (self.host, self.port, self.project_name)
 	def get_team_name(self):
 		"""configファイルで指定したチーム名を返す"""
 		return self.team_name
