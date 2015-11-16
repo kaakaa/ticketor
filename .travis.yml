@@ -11,8 +11,8 @@ after_success:
 - if [ $TRAVIS_BRANCH = 'master' ] && [ $TRAVIS_PULL_REQUEST = 'false' ] && [ $GH_TOKEN ]; then sh deploy_apidoc.sh; fi
 env:
   gloval:
-    GIT_COMMITTER_NAME=kaakaa
-    GIT_COMMITTER_EMAIL=stooner.hoe@gmail.com
-    GIT_AUTHOR_NAME=kaakaa
-    GIT_AUTHOR_EMAIL=stooner.hoe@gmail.com
-    secure: MASLb7ufifjFTeeLUnGlNGK8srGySao0dgR5ZgM+YyM3DgQwIsChYP3okoPX0Hvb0lGR2n7AXiermM4aDkREtVNhdYegapEBPbIoMXBmwaa15MViI1UEy76nHVagCE2DfCpWpEEGdzGq4Uxk7F9fMnF9rjb4b3xjvsNUfI3WRTPqxWPrkNuIWgDrz4YIslV4LRRXBbd3HXvHtWWoS0Kxd2h0MB3zTZl6Hwj2is2sD5RalEvmb3nKlBai5T5h74utpkPiQvQJcuxxTU9jleM8UKqWROgcOGlV8SnARbLvvCso9W+1/4uBjRVm2HH/3YNmnz8727RPLpkBE5KYjXCp7PaQMioh/IW5glCgpHzAz0cwglxqeQ34yNqRzBzDvfGiAOMI9ZOjZ2UeUVj7L7SJVgvfQNOLvzBB6osthwv+f3P5mi0etkuYdkn69tuL5McVBcLuMMPjxP0yzzksQHfkMCKErjmKgrA6zhp4oCft0tuNHz1KviW5J7/jc1ZAvjNmwbTGLC6OoR+zCnMv02XYW1W88dUXNxF5+8m3ODkvcPugC2dMU1/ktu0Z4bAYKU7ITBN+DWPnmpYK0TjcYn6G5K9B4/K2IPPfDcW3G2mRDX2Cgw+zwDe1b3Pzc5z4oDlAvdyaOKzzZgNFWY5iCkBSjEZOAJdsht4Mn+izd4vGi4w=
+    - GIT_COMMITTER_NAME=kaakaa
+    - GIT_COMMITTER_EMAIL=stooner.hoe@gmail.com
+    - GIT_AUTHOR_NAME=kaakaa
+    - GIT_AUTHOR_EMAIL=stooner.hoe@gmail.com
+    - secure: MASLb7ufifjFTeeLUnGlNGK8srGySao0dgR5ZgM+YyM3DgQwIsChYP3okoPX0Hvb0lGR2n7AXiermM4aDkREtVNhdYegapEBPbIoMXBmwaa15MViI1UEy76nHVagCE2DfCpWpEEGdzGq4Uxk7F9fMnF9rjb4b3xjvsNUfI3WRTPqxWPrkNuIWgDrz4YIslV4LRRXBbd3HXvHtWWoS0Kxd2h0MB3zTZl6Hwj2is2sD5RalEvmb3nKlBai5T5h74utpkPiQvQJcuxxTU9jleM8UKqWROgcOGlV8SnARbLvvCso9W+1/4uBjRVm2HH/3YNmnz8727RPLpkBE5KYjXCp7PaQMioh/IW5glCgpHzAz0cwglxqeQ34yNqRzBzDvfGiAOMI9ZOjZ2UeUVj7L7SJVgvfQNOLvzBB6osthwv+f3P5mi0etkuYdkn69tuL5McVBcLuMMPjxP0yzzksQHfkMCKErjmKgrA6zhp4oCft0tuNHz1KviW5J7/jc1ZAvjNmwbTGLC6OoR+zCnMv02XYW1W88dUXNxF5+8m3ODkvcPugC2dMU1/ktu0Z4bAYKU7ITBN+DWPnmpYK0TjcYn6G5K9B4/K2IPPfDcW3G2mRDX2Cgw+zwDe1b3Pzc5z4oDlAvdyaOKzzZgNFWY5iCkBSjEZOAJdsht4Mn+izd4vGi4w=
