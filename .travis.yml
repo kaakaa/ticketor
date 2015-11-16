@@ -8,6 +8,7 @@ script:
 - coverage run --source=app setup.py test
 after_success:
 - coveralls
+- echo $GH_TOKEN
 - if [ $TRAVIS_BRANCH = 'master' ] && [ $TRAVIS_PULL_REQUEST = 'false' ] && [ $GH_TOKEN ]; then sh deploy_apidoc.sh; fi
 env:
   gloval:
