@@ -24,4 +24,4 @@ git add .
 git commit -m "update apidoc"
 
 echo "PUSH"
-git push -u origin gh-pages
+git push --force --quite origin gh-pages > /dev/null 2>&1
