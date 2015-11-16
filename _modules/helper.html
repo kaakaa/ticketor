@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>helper &mdash; app  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="app  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for helper</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span><span class="n">timedelta</span>
+
+<div class="viewcode-block" id="Helper"><a class="viewcode-back" href="../helper.html#helper.Helper">[docs]</a><span class="k">class</span> <span class="nc">Helper</span><span class="p">:</span>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.get_backlog"><a class="viewcode-back" href="../helper.html#helper.Helper.get_backlog">[docs]</a>	<span class="k">def</span> <span class="nf">get_backlog</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="s">&#39;backlog&#39;</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span></div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.get_archivedir"><a class="viewcode-back" href="../helper.html#helper.Helper.get_archivedir">[docs]</a>	<span class="k">def</span> <span class="nf">get_archivedir</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="s">&#39;archives&#39;</span><span class="p">)</span></div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.get_archive_filename"><a class="viewcode-back" href="../helper.html#helper.Helper.get_archive_filename">[docs]</a>	<span class="k">def</span> <span class="nf">get_archive_filename</span><span class="p">(</span><span class="n">now</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y%m</span><span class="si">%d</span><span class="s">%H%M%S&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.json&quot;</span>
+	</div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.daterange"><a class="viewcode-back" href="../helper.html#helper.Helper.daterange">[docs]</a>	<span class="k">def</span> <span class="nf">daterange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+		<span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">days</span><span class="p">):</span>
+			<span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+		<span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y/%m/</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">),</span> <span class="n">dates</span><span class="p">)</span>
+		</div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.calculate_backlog"><a class="viewcode-back" href="../helper.html#helper.Helper.calculate_backlog">[docs]</a>	<span class="k">def</span> <span class="nf">calculate_backlog</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">daterange</span><span class="p">,</span> <span class="n">date_field</span><span class="p">):</span>
+		<span class="n">my_tickets</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tickets</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s">&#39;reporter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">member</span><span class="p">]</span>
+		<span class="n">backlogs</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">daterange</span><span class="p">:</span>
+			<span class="n">sum_point</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s">&#39;point&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">my_tickets</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">date_field</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="n">date_field</span><span class="p">]</span> <span class="o">==</span> <span class="n">date</span><span class="p">])</span>
+			<span class="n">backlogs</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sum_point</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">backlogs</span>
+</div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.calculate_burndown_estimated"><a class="viewcode-back" href="../helper.html#helper.Helper.calculate_burndown_estimated">[docs]</a>	<span class="k">def</span> <span class="nf">calculate_burndown_estimated</span><span class="p">(</span><span class="n">backlogs</span><span class="p">):</span>
+		<span class="n">burndown</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="n">point</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backlogs</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+		<span class="n">all_point</span> <span class="o">=</span> <span class="n">point</span>
+		<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">backlogs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+			<span class="n">point</span> <span class="o">-=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+			<span class="n">burndown</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+			
+		<span class="n">burndown</span><span class="p">[</span><span class="s">&#39;Start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">all_point</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">burndown</span>
+		</div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.calculate_data"><a class="viewcode-back" href="../helper.html#helper.Helper.calculate_data">[docs]</a>	<span class="k">def</span> <span class="nf">calculate_data</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">daterange</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">helper</span> <span class="kn">import</span> <span class="n">Helper</span>
+		
+		<span class="n">backlogs</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">calculate_backlog</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">daterange</span><span class="p">,</span> <span class="s">&#39;due_assign&#39;</span><span class="p">)</span>
+		<span class="n">burndown</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">calculate_burndown_estimated</span><span class="p">(</span><span class="n">backlogs</span><span class="p">)</span>
+		
+		<span class="n">csv</span> <span class="o">=</span> <span class="p">[</span><span class="n">member</span><span class="p">,</span> <span class="n">burndown</span><span class="p">[</span><span class="s">&#39;Start&#39;</span><span class="p">]]</span>
+		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">daterange</span><span class="p">):</span>
+			<span class="n">csv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">burndown</span><span class="p">[</span><span class="n">d</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">csv</span>
+	</div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.calculate_burndown_actual"><a class="viewcode-back" href="../helper.html#helper.Helper.calculate_burndown_actual">[docs]</a>	<span class="k">def</span> <span class="nf">calculate_burndown_actual</span><span class="p">(</span><span class="n">backlogs</span><span class="p">,</span> <span class="n">total_point</span><span class="p">):</span>
+		<span class="n">burndown</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="n">point</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_point</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">backlogs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+			<span class="n">point</span> <span class="o">-=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+			<span class="n">burndown</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+			
+		<span class="n">burndown</span><span class="p">[</span><span class="s">&#39;Start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">total_point</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">burndown</span>
+		
+		</div>
+	<span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Helper.calculate_data_actual"><a class="viewcode-back" href="../helper.html#helper.Helper.calculate_data_actual">[docs]</a>	<span class="k">def</span> <span class="nf">calculate_data_actual</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">daterange</span><span class="p">,</span> <span class="n">total_point</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">helper</span> <span class="kn">import</span> <span class="n">Helper</span>
+		
+		<span class="n">backlogs</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">calculate_backlog</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">daterange</span><span class="p">,</span> <span class="s">&#39;closed&#39;</span><span class="p">)</span>
+		<span class="n">burndown</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">calculate_burndown_actual</span><span class="p">(</span><span class="n">backlogs</span><span class="p">,</span> <span class="n">total_point</span><span class="p">)</span>
+		
+		<span class="n">csv</span> <span class="o">=</span> <span class="p">[</span><span class="n">member</span><span class="p">,</span> <span class="n">burndown</span><span class="p">[</span><span class="s">&#39;Start&#39;</span><span class="p">]]</span>
+		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">daterange</span><span class="p">):</span>
+			<span class="n">csv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">burndown</span><span class="p">[</span><span class="n">d</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">csv</span>
+	</div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

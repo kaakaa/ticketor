@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>trac module &mdash; app  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="app  documentation" href="index.html" />
+    <link rel="next" title="web module" href="web.html" />
+    <link rel="prev" title="helper module" href="helper.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-trac">
+<span id="trac-module"></span><h1>trac module<a class="headerlink" href="#module-trac" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="trac.Trac">
+<em class="property">class </em><code class="descclassname">trac.</code><code class="descname">Trac</code><a class="reference internal" href="_modules/trac.html#Trac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracの情報を保持し、Tracとのインタフェースとなるクラス</p>
+<dl class="attribute">
+<dt id="trac.Trac.auth">
+<code class="descname">auth</code><em class="property"> = {'user': '', 'pass': ''}</em><a class="headerlink" href="#trac.Trac.auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trac認証情報</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.callrpc">
+<code class="descname">callrpc</code><span class="sig-paren">(</span><em>json_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.callrpc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.callrpc" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracRPCを実行する</p>
+<p>configより読みこんだ情報から、TracRPCへDigest認証をセットしたリクエストを送信し、
+responseを返します。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>json_params</strong> &#8211; Trac JSON RPCのリクエストパラメータ(dict)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.callrpc_par">
+<code class="descname">callrpc_par</code><span class="sig-paren">(</span><em>json_params_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.callrpc_par"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.callrpc_par" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracRPCを並列に実行する</p>
+<p>configより読みこんだ情報から、TracRPCへDigest認証をセットしたリクエストを並列で送信し、
+responseを返します。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>json_params_array</strong> &#8211; Trac JSON RPCのリクエストパラメータ配列</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.components">
+<code class="descname">components</code><em class="property"> = []</em><a class="headerlink" href="#trac.Trac.components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracのコンポーネント一覧</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_components">
+<code class="descname">get_components</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracのコンポーネント一覧を返す</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_kanban_home">
+<code class="descname">get_kanban_home</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_kanban_home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_kanban_home" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracのカンバンページのURLを返す</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_milestones">
+<code class="descname">get_milestones</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_milestones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_milestones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracのマイルストーン一覧を返す</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_or_else">
+<code class="descname">get_or_else</code><span class="sig-paren">(</span><em>app</em>, <em>key</em>, <em>default</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_or_else"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_or_else" title="Permalink to this definition">¶</a></dt>
+<dd><p>app.configにキー key が存在する場合はそのvalueを、キー keyが存在しない場合はdefaultを返す</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>app</strong> &#8211; 辞書</li>
+<li><strong>key</strong> &#8211; キー値</li>
+<li><strong>default</strong> &#8211; app.configにキー値 keyが存在しない場合に返される値</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_team_members">
+<code class="descname">get_team_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_team_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_team_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>configファイルで指定したTracユーザ一覧を返す</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_team_name">
+<code class="descname">get_team_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_team_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_team_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>configファイルで指定したチーム名を返す</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_ticket_link">
+<code class="descname">get_ticket_link</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_ticket_link"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_ticket_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>引数のチケットIDのチケットページリンクを生成する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Pram id:</th><td class="field-body">TracチケットID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.get_trac_home">
+<code class="descname">get_trac_home</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_trac_home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_trac_home" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracのURLを返す</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.host">
+<code class="descname">host</code><em class="property"> = None</em><a class="headerlink" href="#trac.Trac.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracのIP</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracクラスの初期設定を行う（必須）</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> &#8211; configファイルの内容を保持したbottle.pyアプリケーションオブジェクト</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.install_auth">
+<code class="descname">install_auth</code><span class="sig-paren">(</span><em>user</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.install_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.install_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracRPCのDigest認証をurllib2に設定する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> &#8211; TracユーザーID</li>
+<li><strong>password</strong> &#8211; userに対するパスワード</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.jsonrpc_path">
+<code class="descname">jsonrpc_path</code><em class="property"> = 'login/jsonrpc'</em><a class="headerlink" href="#trac.Trac.jsonrpc_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracRPCのURLの一部</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.members">
+<code class="descname">members</code><em class="property"> = []</em><a class="headerlink" href="#trac.Trac.members" title="Permalink to this definition">¶</a></dt>
+<dd><p>configファイルで指定したTracユーザ一覧</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.milestones">
+<code class="descname">milestones</code><em class="property"> = []</em><a class="headerlink" href="#trac.Trac.milestones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracのマイルストーン一覧</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.port">
+<code class="descname">port</code><em class="property"> = None</em><a class="headerlink" href="#trac.Trac.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracのポート番号。ポート指定が不要の場合、空文字列を設定する。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.project_name">
+<code class="descname">project_name</code><em class="property"> = None</em><a class="headerlink" href="#trac.Trac.project_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracプロジェクト名</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.read_components">
+<code class="descname">read_components</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.read_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.read_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracに登録されているコンポーネント一覧を取得する</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.read_milestones">
+<code class="descname">read_milestones</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.read_milestones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.read_milestones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracに登録されているマイルストーン一覧を取得する</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.request_par">
+<code class="descname">request_par</code><span class="sig-paren">(</span><em>id</em>, <em>json_params</em>, <em>buf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.request_par"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.request_par" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracRPCのresponseにチケットIDを付与した結果をbufferに格納する</p>
+<p>geventによる並列処理でTracRPCを実行した場合、そのresponseを直接取得できないため、
+bufferに格納していく。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> &#8211; TracチケットID</li>
+<li><strong>json_params</strong> &#8211; Trac JSON RPCのリクエストパラメータ(dict)</li>
+<li><strong>buf</strong> &#8211; TracRPC結果格納buffer</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.team_name">
+<code class="descname">team_name</code><em class="property"> = None</em><a class="headerlink" href="#trac.Trac.team_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>チーム名。バーンダウンチャートのタイトルに使用される。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.ticket_path">
+<code class="descname">ticket_path</code><em class="property"> = 'ticket/%s'</em><a class="headerlink" href="#trac.Trac.ticket_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>TracチケットリンクのURLの一部</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="helper.html" title="previous chapter">helper module</a></li>
+      <li>Next: <a href="web.html" title="next chapter">web module</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/trac.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/trac.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>web &mdash; app  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="app  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for web</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">trac</span>
+<span class="kn">import</span> <span class="nn">json</span><span class="o">,</span><span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">bottle</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">helper</span> <span class="kn">import</span> <span class="n">Helper</span>
+
+<span class="n">rootdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;./app/web.py&#39;</span><span class="p">))</span>
+<span class="n">TEMPLATE_PATH</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;views&#39;</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;rpc&#39;</span><span class="p">))</span>
+
+<span class="n">trac_server</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">Trac</span><span class="p">()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">default_app</span><span class="p">()</span>
+<span class="n">BaseTemplate</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="s">&#39;get_trac_home&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_trac_home</span>
+<span class="n">BaseTemplate</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="s">&#39;get_kanban_home&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_kanban_home</span>
+<span class="n">BaseTemplate</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="s">&#39;get_team_members&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_team_members</span>
+<span class="n">BaseTemplate</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="s">&#39;get_milestones&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_milestones</span>
+<span class="n">BaseTemplate</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="s">&#39;get_components&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_components</span>
+ 
+<span class="nd">@error</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<div class="viewcode-block" id="custom500"><a class="viewcode-back" href="../web.html#web.custom500">[docs]</a><span class="k">def</span> <span class="nf">custom500</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">tob</span><span class="p">(</span><span class="n">template</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">error</span><span class="o">.</span><span class="n">traceback</span><span class="p">))</span>
+
+<span class="c">## Static files </span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/js/&lt;filename&gt;&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="js_static"><a class="viewcode-back" href="../web.html#web.js_static">[docs]</a><span class="k">def</span> <span class="nf">js_static</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">static_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;public/js&#39;</span><span class="p">))</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/css/&lt;filename&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">css_static</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">static_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;public/css&#39;</span><span class="p">))</span>
+
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/css/images/&lt;filename&gt;&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="css_static"><a class="viewcode-back" href="../web.html#web.css_static">[docs]</a><span class="k">def</span> <span class="nf">css_static</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">static_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;public/css/images&#39;</span><span class="p">))</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/fonts/&lt;filename&gt;&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="fonts_static"><a class="viewcode-back" href="../web.html#web.fonts_static">[docs]</a><span class="k">def</span> <span class="nf">fonts_static</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">static_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;public/fonts&#39;</span><span class="p">))</span>
+
+<span class="c">## REST Phage</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../web.html#web.index">[docs]</a><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+	<span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/form&#39;</span><span class="p">)</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/form&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;form&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="form"><a class="viewcode-back" href="../web.html#web.form">[docs]</a><span class="k">def</span> <span class="nf">form</span><span class="p">():</span>
+	<span class="k">return</span> <span class="p">{}</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/update&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tickets</span> <span class="o">=</span> <span class="p">[])</span>
+
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/api/search&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="api_search"><a class="viewcode-back" href="../web.html#web.api_search">[docs]</a><span class="k">def</span> <span class="nf">api_search</span><span class="p">():</span>
+	<span class="kn">from</span> <span class="nn">tracrpc</span> <span class="kn">import</span> <span class="n">SearchTicket</span><span class="p">,</span> <span class="n">GetTicket</span>
+	
+	<span class="n">ticket_ids</span> <span class="o">=</span> <span class="n">SearchTicket</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="p">)</span>
+	<span class="n">tickets</span> <span class="o">=</span> <span class="n">GetTicket</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">ticket_ids</span><span class="p">)</span>
+	
+	<span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">200</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;application/json&#39;</span>
+	<span class="k">return</span> <span class="p">{</span><span class="s">&#39;result&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tickets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">)))}</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/search&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="view_search"><a class="viewcode-back" href="../web.html#web.view_search">[docs]</a><span class="k">def</span> <span class="nf">view_search</span><span class="p">():</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="n">api_search</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;text/html; charset=UTF-8&#39;</span>
+	<span class="k">return</span> <span class="n">body</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/update&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../web.html#web.update">[docs]</a><span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+	<span class="kn">from</span> <span class="nn">tracrpc</span> <span class="kn">import</span> <span class="n">UpdateTicket</span>
+	
+	<span class="n">tickets</span> <span class="o">=</span> <span class="n">UpdateTicket</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tickets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">)))</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/api/archives&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="api_archives"><a class="viewcode-back" href="../web.html#web.api_archives">[docs]</a><span class="k">def</span> <span class="nf">api_archives</span><span class="p">():</span>
+	<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;data/archives/*.json&#39;</span><span class="p">)),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">read_json</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">read_json</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]])</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">200</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;application/json&#39;</span>
+	<span class="k">return</span> <span class="p">{</span><span class="s">&#39;result&#39;</span><span class="p">:</span> <span class="n">body</span><span class="p">}</span>
+	</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/archives&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;archives&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="archives"><a class="viewcode-back" href="../web.html#web.archives">[docs]</a><span class="k">def</span> <span class="nf">archives</span><span class="p">():</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="n">api_archives</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;text/html; charset=UTF-8&#39;</span>
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">archives</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="read_backlogs"><a class="viewcode-back" href="../web.html#web.read_backlogs">[docs]</a><span class="k">def</span> <span class="nf">read_backlogs</span><span class="p">(</span><span class="n">backlog</span><span class="p">,</span> <span class="n">member</span><span class="p">):</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">backlog</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+		<span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">member</span><span class="p">:</span>
+				<span class="n">buf</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+						<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+				<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">result</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/api/backlogs&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="api_backlogs"><a class="viewcode-back" href="../web.html#web.api_backlogs">[docs]</a><span class="k">def</span> <span class="nf">api_backlogs</span><span class="p">():</span>
+	<span class="n">ms</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;milestone&#39;</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="p">)</span>
+	<span class="n">member</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;member&#39;</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="p">)</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+	
+	<span class="n">backlog</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">get_backlog</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">ms</span> <span class="o">+</span> <span class="s">&#39;_estimated.csv&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">backlog</span><span class="p">):</span>
+		<span class="n">header</span> <span class="o">=</span> <span class="n">read_backlogs</span><span class="p">(</span><span class="n">backlog</span><span class="p">,</span> <span class="s">&#39;Date&#39;</span><span class="p">)</span>
+		<span class="n">data</span> <span class="o">+=</span> <span class="n">header</span>
+		<span class="n">burndown</span> <span class="o">=</span> <span class="n">read_backlogs</span><span class="p">(</span><span class="n">backlog</span><span class="p">,</span> <span class="n">member</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">burndown</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Estimated&#39;</span>
+		<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">burndown</span><span class="p">)</span>
+	
+	<span class="n">backlog</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">get_backlog</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">ms</span> <span class="o">+</span> <span class="s">&#39;_actual.csv&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">backlog</span><span class="p">):</span>
+		<span class="n">burndown</span> <span class="o">=</span> <span class="n">read_backlogs</span><span class="p">(</span><span class="n">backlog</span><span class="p">,</span> <span class="n">member</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">burndown</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Actual&#39;</span>
+		<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">burndown</span><span class="p">)</span>
+	
+	<span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">200</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;application/json&#39;</span>
+	<span class="k">return</span> <span class="p">{</span><span class="s">&#39;result&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">}</span>
+
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/backlog&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="backlog"><a class="viewcode-back" href="../web.html#web.backlog">[docs]</a><span class="k">def</span> <span class="nf">backlog</span><span class="p">():</span>
+	<span class="c"># Report Ticket</span>
+	<span class="kn">from</span> <span class="nn">tracrpc</span> <span class="kn">import</span> <span class="n">SearchTicket</span><span class="p">,</span> <span class="n">GetTicket</span>
+	
+	<span class="n">ticket_ids</span> <span class="o">=</span> <span class="n">SearchTicket</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="p">)</span>
+	<span class="n">tickets</span> <span class="o">=</span> <span class="n">GetTicket</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">ticket_ids</span><span class="p">)</span>
+
+	<span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;start&#39;</span><span class="p">,</span> <span class="s">&#39;2000/01/01&#39;</span><span class="p">),</span> <span class="s">&#39;%Y/%m/</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span>
+	<span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;end&#39;</span><span class="p">,</span> <span class="s">&#39;2000/01/02&#39;</span><span class="p">),</span> <span class="s">&#39;%Y/%m/</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span>
+
+	<span class="n">dates</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">daterange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+	<span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Date&#39;</span><span class="p">,</span> <span class="s">&#39;Start&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">dates</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_team_members</span><span class="p">():</span>
+		<span class="n">backlogs</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">calculate_data</span><span class="p">(</span><span class="n">tickets</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span>
+		<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">backlogs</span><span class="p">)</span>
+		
+	<span class="c"># Calculate All Member&#39;s burndown</span>
+	<span class="n">all_member</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">per_member</span><span class="p">[</span><span class="n">daily</span><span class="p">])</span> <span class="k">for</span> <span class="n">per_member</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]))</span> <span class="k">for</span> <span class="n">daily</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+	<span class="n">all_member</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;ALL&#39;</span><span class="p">)</span>
+	<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_member</span><span class="p">)</span>
+	
+	<span class="n">result</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+	<span class="nb">file</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">get_backlog</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;milestone&#39;</span><span class="p">,</span> <span class="s">&#39;none&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_estimated.csv&#39;</span><span class="p">)</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+
+	<span class="c"># Closing Ticket</span>
+	<span class="kn">from</span> <span class="nn">tracrpc</span> <span class="kn">import</span> <span class="n">ChangeLogTicket</span>
+	<span class="n">change_ticket</span> <span class="o">=</span> <span class="n">ChangeLogTicket</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">ticket_ids</span><span class="p">)</span>
+	<span class="n">close_burndown</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_team_members</span><span class="p">():</span>
+		<span class="n">owned_logs</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">change_ticket</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;member&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="s">&#39;member&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">member</span><span class="p">]</span>
+		<span class="n">closed_ticket</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">ol</span> <span class="ow">in</span> <span class="n">owned_logs</span><span class="p">:</span>
+			<span class="n">t</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tickets</span> <span class="k">if</span> <span class="n">ol</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]),</span> <span class="bp">None</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">t</span><span class="p">[</span><span class="s">&#39;closed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ol</span><span class="p">[</span><span class="s">&#39;datetime&#39;</span><span class="p">]</span>
+				<span class="n">closed_ticket</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+		<span class="n">close_burndown</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Helper</span><span class="o">.</span><span class="n">calculate_data_actual</span><span class="p">(</span><span class="n">closed_ticket</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="nb">next</span><span class="p">((</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">member</span><span class="p">))[</span><span class="mi">1</span><span class="p">]))</span>
+
+	<span class="c"># Calculate All Member&#39;s burndown</span>
+	<span class="n">all_member</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">per_member</span><span class="p">[</span><span class="n">daily</span><span class="p">])</span> <span class="k">for</span> <span class="n">per_member</span> <span class="ow">in</span> <span class="n">close_burndown</span><span class="p">]))</span> <span class="k">for</span> <span class="n">daily</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">close_burndown</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+	<span class="n">all_member</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;ALL&#39;</span><span class="p">)</span>
+	<span class="n">close_burndown</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_member</span><span class="p">)</span>
+	
+	<span class="n">close_burndown</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+	<span class="nb">file</span> <span class="o">=</span> <span class="n">Helper</span><span class="o">.</span><span class="n">get_backlog</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;milestone&#39;</span><span class="p">,</span> <span class="s">&#39;none&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_actual.csv&#39;</span><span class="p">)</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">close_burndown</span><span class="p">:</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+
+	<span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/burndown&#39;</span><span class="p">)</span>
+	</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/burndown&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;burndown&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="burn"><a class="viewcode-back" href="../web.html#web.burn">[docs]</a><span class="k">def</span> <span class="nf">burn</span><span class="p">():</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;text/html; charset=UTF-8&#39;</span>
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[])</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/burndown&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<span class="nd">@view</span><span class="p">(</span><span class="s">&#39;burndown&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="burndown"><a class="viewcode-back" href="../web.html#web.burndown">[docs]</a><span class="k">def</span> <span class="nf">burndown</span><span class="p">():</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="n">api_backlogs</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+	<span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&#39;text/html; charset=UTF-8&#39;</span>
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">member</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;member&#39;</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="p">),</span> <span class="n">team</span> <span class="o">=</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_team_name</span><span class="p">())</span>
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="s">&#39;/regist&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="regist"><a class="viewcode-back" href="../web.html#web.regist">[docs]</a><span class="k">def</span> <span class="nf">regist</span><span class="p">():</span>
+	<span class="kn">from</span> <span class="nn">tracrpc</span> <span class="kn">import</span> <span class="n">CreateTicket</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">ticket_id</span> <span class="o">=</span> <span class="n">CreateTicket</span><span class="o">.</span><span class="n">create_team_ticket</span><span class="p">(</span><span class="n">trac_server</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="p">)</span>
+
+		<span class="c"># Output archive file</span>
+		<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;Date&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y/%m/</span><span class="si">%d</span><span class="s"> %H:%M:%S&quot;</span><span class="p">),</span> <span class="s">&quot;Title&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;title&quot;</span><span class="p">)),</span> <span class="s">&quot;Link&quot;</span><span class="p">:</span> <span class="n">trac_server</span><span class="o">.</span><span class="n">get_ticket_link</span><span class="p">(</span><span class="n">ticket_id</span><span class="p">)}</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">Helper</span><span class="o">.</span><span class="n">get_archivedir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span> <span class="o">+</span> <span class="n">Helper</span><span class="o">.</span><span class="n">get_archive_filename</span><span class="p">(</span><span class="n">now</span><span class="p">)),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+			<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+		
+		<span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/archives&#39;</span><span class="p">,</span> <span class="mi">303</span><span class="p">)</span>
+	<span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">HTTPResponse</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">&#39;The server couldn</span><span class="se">\&#39;</span><span class="s">t fulfill the request. </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="c">## Initialize Phase</span>
+</div>
+<div class="viewcode-block" id="convert_keys_to_string"><a class="viewcode-back" href="../web.html#web.convert_keys_to_string">[docs]</a><span class="k">def</span> <span class="nf">convert_keys_to_string</span><span class="p">(</span><span class="n">dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Recursively converts dictionary keys to strings.&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">dictionary</span>
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">convert_keys_to_string</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> 
+		<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="initialize"><a class="viewcode-back" href="../web.html#web.initialize">[docs]</a><span class="k">def</span> <span class="nf">initialize</span><span class="p">():</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;conf/config.json&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+		<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">convert_keys_to_string</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)))</span>
+	<span class="n">trac_server</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">initialize</span><span class="p">()</span>
+	<span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">&quot;0.0.0.0&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="s">&quot;5200&quot;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
