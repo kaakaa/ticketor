@@ -8,14 +8,8 @@ script:
 - coverage run --source=app setup.py test
 after_success:
 - coveralls
-- echo $GH_TOKEN
 - if [ $TRAVIS_BRANCH = 'master' ] && [ $TRAVIS_PULL_REQUEST = 'false' ] && [ $GH_TOKEN
   ]; then sh deploy_apidoc.sh; fi
 env:
-  gloval:
-  - GIT_COMMITTER_NAME=kaakaa
-  - GIT_COMMITTER_EMAIL=stooner.hoe@gmail.com
-  - GIT_AUTHOR_NAME=kaakaa
-  - GIT_AUTHOR_EMAIL=stooner.hoe@gmail.com
   global:
     secure: Lee01+VHJ6awYk1Jg1Ik5CcJhrouY38RQPpAXxJfhhXteTYzgEAT46h8XE/1U3RA2UVYiiwfL2KeyviW72nAWinF0r5KE0agsdXrIA8mFWTe9s1bLaW6Vov/JBDeIbPRZYFnXq59gD670cybwLIyB0679tj6JFqaeC+ed/nAne25ASO1EPUXHGI2eEVwly2qjh07tlLNnGOi6ivlZreV2oXHj1REsEw6LBXFE//QvRlFNI8WGTCxw9+DO0oPfkjUruHiOFIxe79+mLe2KoxJ45OPjUEn6QQ46ugbN3ugdIsflv6+jF4iFzOBF6x6hvXw0M7wU5cye4Af1QyOn22auuqeYCpWJerQHGHAOjCR+FngktoQfOfsxFKoxJuzG+YiJlKBCCRFJK+PqJxiwjAtTEH2nwOKuuGYCw30TpWght8358/QhMmN32ftMe1MTwkt/mgHU1U8LbU4zkNsEOw5km4aZHxPvOyAbTjS01vJzgZsSU9csgxrWcKhM0ZVQS9UJXF0gwJH8JCm4dY69Uuq199E7Aelrl0iak7cx5ExDzJiPyoxT7UnPSahxnULtLuy6cvjRVLEyDcMu1xfn5q+5iKhk7qj+dNfHt7kMkhS5Lop8Vt9ZcsMLi2bWH0NYMKh+LbhqDBrTQS1BsebV8uLti+BKHzI662QLwA2uqbCRxo=
