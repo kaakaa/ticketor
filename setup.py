@@ -6,16 +6,19 @@ from docs.build_apidoc import BuildApiCommand
 sys.path.append('./')
 sys.path.append('./app')
 sys.path.append('./app/rpc')
-sys.path.append('./app/test')
+sys.path.append('./docs')
 
 install_reqs = parse_requirements('./requirements.txt', session=False)
 reqs = [str(ir.req) for ir in install_reqs]
 long_description = open('README.md', 'r').read().decode('utf-8')
 
+name = 'trac-team-task-register'
+version = '0.1'
+
 setup(
 	# Project Infomation
-	name = 'trac-team-task-register',
-	version = '0.1',
+	name = name,
+	version = version,
 	description = 'Manipulate trac tickets',
 	long_description=long_description,
 

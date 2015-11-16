@@ -18,8 +18,9 @@ class BuildApiCommand(distutils.cmd.Command):
     """Post-process options."""
 
   def run(self):
+    metadata = self.distribution.metadata
     from sphinx.apidoc import main
     """Run command."""
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    exit = main(['sphinx-apidoc', '-F', '-o', './docs', './app'])
+    exit = main(['sphinx-apidoc', '-F', '-H', metadata.name, '-A', metadata.author, '-V', metadata.version, '-o', './docs', './app'])
     self.run_command('build_sphinx')
