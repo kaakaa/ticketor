@@ -1,11 +1,14 @@
 language: python
 python:
-        - "2.7"
+- '2.7'
 install:
-        - pip install -r requirements.txt
-        - pip install coveralls
+- pip install -r requirements.txt
+- pip install coveralls
 script:
-        # - python -m unittest discover -s test
-        - coverage run --source=app setup.py test
+- coverage run --source=app setup.py test
 after_success:
-        - coveralls
+- coveralls
+- if [ $TRAVIS_BRANCH = 'master' ] && [ $TRAVIS_PULL_REQUEST = 'false' ]; then sh deploy_apidoc.sh; fi
+env:
+  gloval:
+    secure: MASLb7ufifjFTeeLUnGlNGK8srGySao0dgR5ZgM+YyM3DgQwIsChYP3okoPX0Hvb0lGR2n7AXiermM4aDkREtVNhdYegapEBPbIoMXBmwaa15MViI1UEy76nHVagCE2DfCpWpEEGdzGq4Uxk7F9fMnF9rjb4b3xjvsNUfI3WRTPqxWPrkNuIWgDrz4YIslV4LRRXBbd3HXvHtWWoS0Kxd2h0MB3zTZl6Hwj2is2sD5RalEvmb3nKlBai5T5h74utpkPiQvQJcuxxTU9jleM8UKqWROgcOGlV8SnARbLvvCso9W+1/4uBjRVm2HH/3YNmnz8727RPLpkBE5KYjXCp7PaQMioh/IW5glCgpHzAz0cwglxqeQ34yNqRzBzDvfGiAOMI9ZOjZ2UeUVj7L7SJVgvfQNOLvzBB6osthwv+f3P5mi0etkuYdkn69tuL5McVBcLuMMPjxP0yzzksQHfkMCKErjmKgrA6zhp4oCft0tuNHz1KviW5J7/jc1ZAvjNmwbTGLC6OoR+zCnMv02XYW1W88dUXNxF5+8m3ODkvcPugC2dMU1/ktu0Z4bAYKU7ITBN+DWPnmpYK0TjcYn6G5K9B4/K2IPPfDcW3G2mRDX2Cgw+zwDe1b3Pzc5z4oDlAvdyaOKzzZgNFWY5iCkBSjEZOAJdsht4Mn+izd4vGi4w=
