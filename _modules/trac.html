@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>trac &mdash; app  documentation</title>
+    <title>trac &mdash; trac-team-task-register 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '',
+        VERSION:     '0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="app  documentation" href="../index.html" />
+    <link rel="top" title="trac-team-task-register 0.1 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" />
    
   
@@ -44,12 +44,16 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">gevent</span>
 <span class="kn">from</span> <span class="nn">gevent</span> <span class="kn">import</span> <span class="n">monkey</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
 <span class="n">monkey</span><span class="o">.</span><span class="n">patch_all</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Trac"><a class="viewcode-back" href="../trac.html#trac.Trac">[docs]</a><span class="k">class</span> <span class="nc">Trac</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;Tracの情報を保持し、Tracとのインタフェースとなるクラス&quot;&quot;&quot;</span>
 	
+	<span class="n">loading_at</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;Tracの設定をロードした日時&quot;&quot;&quot;</span>
+
 	<span class="n">host</span> <span class="o">=</span> <span class="bp">None</span>
 	<span class="sd">&quot;&quot;&quot;TracのIP&quot;&quot;&quot;</span>
 	<span class="n">port</span> <span class="o">=</span> <span class="bp">None</span>
@@ -89,6 +93,9 @@
 <span class="sd">		</span>
 <span class="sd">		:param app: configファイルの内容を保持したbottle.pyアプリケーションオブジェクト</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">loading_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+		
 		<span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_else</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&#39;trac.host&#39;</span><span class="p">,</span> <span class="s">&#39;localhost&#39;</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_else</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&#39;trac.port&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s">&#39;:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span>
@@ -190,7 +197,28 @@
 		<span class="k">return</span> <span class="s">&quot;http://</span><span class="si">%s%s</span><span class="s">/trac/wiki/</span><span class="si">%s</span><span class="s">/kanban&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span></div>
 <div class="viewcode-block" id="Trac.get_team_name"><a class="viewcode-back" href="../trac.html#trac.Trac.get_team_name">[docs]</a>	<span class="k">def</span> <span class="nf">get_team_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;configファイルで指定したチーム名を返す&quot;&quot;&quot;</span>
-		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">team_name</span></div></div>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">team_name</span>
+</div>
+<div class="viewcode-block" id="Trac.connection_test"><a class="viewcode-back" href="../trac.html#trac.Trac.connection_test">[docs]</a>	<span class="k">def</span> <span class="nf">connection_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Tracへのコネクションテスト&quot;&quot;&quot;</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callrpc</span><span class="p">({</span> <span class="s">&#39;params&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;method&#39;</span><span class="p">:</span> <span class="s">&#39;system.getAPIVersion&#39;</span> <span class="p">})</span>
+		<span class="k">print</span> <span class="n">response</span>
+		<span class="k">print</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)[</span><span class="s">&#39;error&#39;</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Trac.get_trac_settings"><a class="viewcode-back" href="../trac.html#trac.Trac.get_trac_settings">[docs]</a>	<span class="k">def</span> <span class="nf">get_trac_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Tracプロジェクトの設定を返す&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s">&#39;loading_at&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loading_at</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y/%m/</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">),</span>
+			<span class="s">&#39;host&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+			<span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+			<span class="s">&#39;project_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
+			<span class="s">&#39;team_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">team_name</span><span class="p">,</span>
+			<span class="s">&#39;auth&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">,</span>
+			<span class="s">&#39;milestones&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span><span class="p">,</span>
+			<span class="s">&#39;components&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span>
+			<span class="s">&#39;members&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span>
+		<span class="p">}</span></div></div>
 </pre></div>
 
           </div>

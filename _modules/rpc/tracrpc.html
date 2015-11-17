@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rpc.tracrpc &mdash; trac-team-task-register 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="trac-team-task-register 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for rpc.tracrpc</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">class</span> <span class="nc">_TracRPC</span><span class="p">:</span>
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">make_params</span><span class="p">():</span>
+		<span class="k">return</span> <span class="p">{</span><span class="s">&#39;params&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;method&#39;</span><span class="p">:</span> <span class="s">&#39;system.getAPIVersion&#39;</span><span class="p">}</span>
+	
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">format_response</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+		<span class="n">res_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">res_json</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">res_json</span><span class="p">[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;http://trac&#39;</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">res_json</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">],</span> <span class="n">hdrs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fp</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+	
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">json_params</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">forms</span><span class="p">)</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc</span><span class="p">(</span><span class="n">json_params</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CreateTicket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.CreateTicket">[docs]</a><span class="k">class</span> <span class="nc">CreateTicket</span><span class="p">(</span><span class="n">_TracRPC</span><span class="p">):</span>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CreateTicket.make_params"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.CreateTicket.make_params">[docs]</a>	<span class="k">def</span> <span class="nf">make_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">title</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;title&#39;</span><span class="p">)</span>
+		<span class="n">desc</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;desc&#39;</span><span class="p">)</span>
+		<span class="n">point</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;point&#39;</span><span class="p">)</span>
+		<span class="n">component</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;component&#39;</span><span class="p">)</span>
+		<span class="n">milestone</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;milestone&#39;</span><span class="p">)</span>
+		<span class="n">due_assign</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;due_assign&#39;</span><span class="p">)</span>
+		<span class="n">due_close</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;due_close&#39;</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s">&#39;params&#39;</span><span class="p">:</span> 
+				<span class="p">[</span>
+					<span class="n">title</span><span class="p">,</span> 
+					<span class="n">desc</span><span class="p">,</span> 
+					<span class="p">{</span>
+						<span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="n">component</span><span class="p">,</span>
+						<span class="s">&#39;milestone&#39;</span><span class="p">:</span> <span class="n">milestone</span><span class="p">,</span>
+						<span class="s">&#39;point&#39;</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span>
+						<span class="s">&#39;due_assign&#39;</span><span class="p">:</span> <span class="n">due_assign</span><span class="p">,</span>
+						<span class="s">&#39;due_close&#39;</span><span class="p">:</span> <span class="n">due_close</span>
+					<span class="p">}</span>
+				<span class="p">],</span>
+			<span class="s">&#39;method&#39;</span><span class="p">:</span> <span class="s">&#39;ticket.create&#39;</span>
+		<span class="p">}</span>
+	</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CreateTicket.create_master_ticket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.CreateTicket.create_master_ticket">[docs]</a>	<span class="k">def</span> <span class="nf">create_master_ticket</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">json_params</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">forms</span><span class="p">)</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc</span><span class="p">(</span><span class="n">json_params</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+		</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CreateTicket.create_slave_ticket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.CreateTicket.create_slave_ticket">[docs]</a>	<span class="k">def</span> <span class="nf">create_slave_ticket</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">,</span> <span class="n">parent_id</span><span class="p">,</span> <span class="n">member</span><span class="p">):</span>
+		<span class="n">json_params</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">forms</span><span class="p">)</span>
+		<span class="n">json_params</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s">&#39;parents&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parent_id</span><span class="p">)</span>
+		<span class="n">json_params</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s">&#39;reporter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">member</span>
+		
+		<span class="n">response</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc</span><span class="p">(</span><span class="n">json_params</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+		</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CreateTicket.create_team_ticket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.CreateTicket.create_team_ticket">[docs]</a>	<span class="k">def</span> <span class="nf">create_team_ticket</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">ticket_id</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">create_master_ticket</span><span class="p">(</span><span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">)</span>
+		
+		<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">trac</span><span class="o">.</span><span class="n">get_team_members</span><span class="p">():</span>
+			<span class="n">ticket_id2</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">create_slave_ticket</span><span class="p">(</span><span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">,</span> <span class="n">ticket_id</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">ticket_id</span>
+
+
+</div></div>
+<div class="viewcode-block" id="SearchTicket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.SearchTicket">[docs]</a><span class="k">class</span> <span class="nc">SearchTicket</span><span class="p">(</span><span class="n">_TracRPC</span><span class="p">):</span>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SearchTicket.make_params"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.SearchTicket.make_params">[docs]</a>	<span class="k">def</span> <span class="nf">make_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">non_empty_forms</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">forms</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="n">buf</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="s">&quot;member&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;reporter=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;member&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s">&quot;owner&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;owner=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;owner&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s">&quot;component&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;component=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;component&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s">&quot;milestone&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;milestone=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;milestone&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s">&quot;due_assign&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;due_assign=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;due_assign&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s">&quot;due_close&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;due_close=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;due_close&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s">&quot;max&quot;</span> <span class="ow">in</span> <span class="n">non_empty_forms</span><span class="p">:</span>
+			<span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;max=&quot;</span> <span class="o">+</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;max&quot;</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&quot;&amp;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">buf</span><span class="p">))],</span>
+			<span class="s">&quot;method&quot;</span><span class="p">:</span> <span class="s">&quot;ticket.query&quot;</span>
+		<span class="p">}</span>
+</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SearchTicket.execute"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.SearchTicket.execute">[docs]</a>	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">json_params</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">forms</span><span class="p">)</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc</span><span class="p">(</span><span class="n">json_params</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="GetTicket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.GetTicket">[docs]</a><span class="k">class</span> <span class="nc">GetTicket</span><span class="p">(</span><span class="n">_TracRPC</span><span class="p">):</span>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GetTicket.make_params"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.GetTicket.make_params">[docs]</a>	<span class="k">def</span> <span class="nf">make_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="p">],</span>
+			<span class="s">&quot;method&quot;</span><span class="p">:</span> <span class="s">&quot;ticket.get&quot;</span>
+		<span class="p">}</span>
+</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GetTicket.format_response"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.GetTicket.format_response">[docs]</a>	<span class="k">def</span> <span class="nf">format_response</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">res_dict</span><span class="p">):</span>
+		<span class="nb">id</span> <span class="o">=</span> <span class="n">res_dict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="n">res_dict</span><span class="p">[</span><span class="s">&#39;response&#39;</span><span class="p">]</span>
+		<span class="n">res_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">res_json</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">result</span> <span class="o">=</span> <span class="n">res_json</span><span class="p">[</span><span class="s">&#39;result&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+			<span class="n">result</span><span class="p">[</span><span class="s">u&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+			<span class="k">return</span> <span class="n">result</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;http://trac&#39;</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">res_json</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">],</span> <span class="n">hdrs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fp</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GetTicket.execute"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.GetTicket.execute">[docs]</a>	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+		<span class="n">json_params_array</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+			<span class="n">json_params_array</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+		
+		<span class="n">tickets</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc_par</span><span class="p">(</span><span class="n">json_params_array</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">res_dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">res_dict</span> <span class="ow">in</span> <span class="n">tickets</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="UpdateTicket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.UpdateTicket">[docs]</a><span class="k">class</span> <span class="nc">UpdateTicket</span><span class="p">(</span><span class="n">_TracRPC</span><span class="p">):</span>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UpdateTicket.make_params"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.UpdateTicket.make_params">[docs]</a>	<span class="k">def</span> <span class="nf">make_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span>
+				<span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+				<span class="s">&quot;Bulk status update&quot;</span><span class="p">,</span>
+				<span class="p">{</span>
+					<span class="s">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+					<span class="s">&quot;owner&quot;</span><span class="p">:</span> <span class="n">user</span>
+				<span class="p">}</span>
+			<span class="p">],</span>
+			<span class="s">&quot;method&quot;</span><span class="p">:</span> <span class="s">&quot;ticket.update&quot;</span>
+		<span class="p">}</span>
+		</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UpdateTicket.execute"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.UpdateTicket.execute">[docs]</a>	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">forms</span><span class="p">):</span>
+		<span class="n">user</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;targetuser&#39;</span><span class="p">)</span>
+		<span class="n">status</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;status&#39;</span><span class="p">)</span>
+		<span class="n">tickets</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">forms</span><span class="o">.</span><span class="n">getall</span><span class="p">(</span><span class="s">&#39;ticketid&#39;</span><span class="p">):</span>
+			<span class="n">json_params</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+			<span class="n">response</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc</span><span class="p">(</span><span class="n">json_params</span><span class="p">)</span>
+			<span class="n">ticket</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">response</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span>
+			<span class="n">ticket</span><span class="p">[</span><span class="s">u&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+			<span class="n">tickets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticket</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">tickets</span>
+
+</div></div>
+<div class="viewcode-block" id="ChangeLogTicket"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.ChangeLogTicket">[docs]</a><span class="k">class</span> <span class="nc">ChangeLogTicket</span><span class="p">(</span><span class="n">_TracRPC</span><span class="p">):</span>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ChangeLogTicket.make_params"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.ChangeLogTicket.make_params">[docs]</a>	<span class="k">def</span> <span class="nf">make_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="p">],</span>
+			<span class="s">&quot;method&quot;</span><span class="p">:</span> <span class="s">&quot;ticket.changeLog&quot;</span>
+		<span class="p">}</span>
+</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ChangeLogTicket.format_response"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.ChangeLogTicket.format_response">[docs]</a>	<span class="k">def</span> <span class="nf">format_response</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">res_dict</span><span class="p">):</span>
+		<span class="nb">id</span> <span class="o">=</span> <span class="n">res_dict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="n">res_dict</span><span class="p">[</span><span class="s">&#39;response&#39;</span><span class="p">]</span>
+		<span class="n">res_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">res_json</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">result</span> <span class="o">=</span> <span class="n">res_json</span><span class="p">[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+			<span class="n">close_logs</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">,</span> <span class="s">&#39;datetime&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">u&quot;__jsonclass__&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S&#39;</span><span class="p">),</span> <span class="s">&#39;%Y/%m/</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">),</span> <span class="s">&#39;member&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;status&#39;</span> <span class="ow">and</span> <span class="n">r</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;closed&#39;</span><span class="p">]</span>
+			<span class="n">recent</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="k">if</span> <span class="n">close_logs</span> <span class="o">!=</span> <span class="p">[]:</span>
+				<span class="n">recent</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">close_logs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="p">[</span><span class="s">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">return</span> <span class="n">recent</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;http://trac&#39;</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">res_json</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">],</span> <span class="n">hdrs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fp</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+	</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ChangeLogTicket.execute"><a class="viewcode-back" href="../../rpc.html#rpc.tracrpc.ChangeLogTicket.execute">[docs]</a>	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trac</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+		<span class="n">json_params_array</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+			<span class="n">json_params_array</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+		
+		<span class="n">tickets</span> <span class="o">=</span> <span class="n">trac</span><span class="o">.</span><span class="n">callrpc_par</span><span class="p">(</span><span class="n">json_params_array</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">format_response</span><span class="p">(</span><span class="n">res_dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">res_dict</span> <span class="ow">in</span> <span class="n">tickets</span><span class="p">]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

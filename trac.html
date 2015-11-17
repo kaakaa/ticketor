@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>trac module &mdash; app  documentation</title>
+    <title>trac module &mdash; trac-team-task-register 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,9 +23,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="app  documentation" href="index.html" />
+    <link rel="top" title="trac-team-task-register 0.1 documentation" href="index.html" />
     <link rel="next" title="web module" href="web.html" />
-    <link rel="prev" title="helper module" href="helper.html" />
+    <link rel="prev" title="rpc package" href="rpc.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -86,6 +86,12 @@ responseを返します。</p>
 <dt id="trac.Trac.components">
 <code class="descname">components</code><em class="property"> = []</em><a class="headerlink" href="#trac.Trac.components" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tracのコンポーネント一覧</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trac.Trac.connection_test">
+<code class="descname">connection_test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.connection_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.connection_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracへのコネクションテスト</p>
 </dd></dl>
 
 <dl class="method">
@@ -157,6 +163,12 @@ responseを返します。</p>
 <dd><p>TracのURLを返す</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="trac.Trac.get_trac_settings">
+<code class="descname">get_trac_settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trac.html#Trac.get_trac_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trac.Trac.get_trac_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracプロジェクトの設定を返す</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="trac.Trac.host">
 <code class="descname">host</code><em class="property"> = None</em><a class="headerlink" href="#trac.Trac.host" title="Permalink to this definition">¶</a></dt>
@@ -199,6 +211,12 @@ responseを返します。</p>
 <dt id="trac.Trac.jsonrpc_path">
 <code class="descname">jsonrpc_path</code><em class="property"> = 'login/jsonrpc'</em><a class="headerlink" href="#trac.Trac.jsonrpc_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>TracRPCのURLの一部</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trac.Trac.loading_at">
+<code class="descname">loading_at</code><em class="property"> = None</em><a class="headerlink" href="#trac.Trac.loading_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracの設定をロードした日時</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -283,7 +301,7 @@ bufferに格納していく。</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="helper.html" title="previous chapter">helper module</a></li>
+      <li>Previous: <a href="rpc.html" title="previous chapter">rpc package</a></li>
       <li>Next: <a href="web.html" title="next chapter">web module</a></li>
   </ul></li>
 </ul>
