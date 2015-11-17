@@ -23,7 +23,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Trac Ticktor</a>
+          <a class="navbar-brand" href="/">Trac Ticketor</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -48,7 +48,7 @@
   </div>
   <script type="text/javascript">
     $(function(){
-      $('#desc').val('== 概要 == \r\n\r\n\r\n== 前提条件 == \r\n\r\n\r\n== 完了条件 ==');
+      $('#desc').val('== 目的 == \r\n\r\n\r\n== 前提条件 == \r\n\r\n\r\n== 完了条件 ==');
       $('#nav-{{page}}').addClass('active');
       
       $("#due_assign").datepicker({dateFormat: 'yy/mm/dd'});
