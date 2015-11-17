@@ -162,8 +162,6 @@ class Trac:
 	def connection_test(self):
 		"""Tracへのコネクションテスト"""
 		response = self.callrpc({ 'params': '', 'method': 'system.getAPIVersion' })
-		print response
-		print json.loads(response)
 		return json.loads(response)['error']
 
 	def get_trac_settings(self):
