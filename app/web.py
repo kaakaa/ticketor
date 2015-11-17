@@ -228,10 +228,24 @@ def regist():
 	except urllib2.URLError, e:
 		return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
 
+@route('/settings/trac')
+def trac_settings():
+	return trac_server.get_trac_settings()
+
 @route('/settings')
 @view('settings')
 def settings():
-	return {}
+	return trac_settings()
+	
+@route('/servertest')
+def server_test():
+	return trac_server.connection_test()
+	
+@route('/reload')
+def reload():
+	initialize()
+	response.status = 200
+	return response
 	
 ## Initialize Phase
 

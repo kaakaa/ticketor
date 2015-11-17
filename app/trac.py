@@ -4,12 +4,16 @@ import urllib2
 import json
 import gevent
 from gevent import monkey
+from datetime import datetime
 
 monkey.patch_all()
 
 class Trac:
 	"""Tracの情報を保持し、Tracとのインタフェースとなるクラス"""
 	
+	loading_at = None
+	"""Tracの設定をロードした日時"""
+
 	host = None
 	"""TracのIP"""
 	port = None
@@ -49,6 +53,9 @@ class Trac:
 		
 		:param app: configファイルの内容を保持したbottle.pyアプリケーションオブジェクト
 		"""
+		
+		self.loading_at = datetime.now()
+		
 		self.host = self.get_or_else(app, 'trac.host', 'localhost')
 		self.port = self.get_or_else(app, 'trac.port', '')
 		self.port = '' if len(self.port) == 0 else ':' + self.port
@@ -151,3 +158,24 @@ class Trac:
 	def get_team_name(self):
 		"""configファイルで指定したチーム名を返す"""
 		return self.team_name
+
+	def connection_test(self):
+		"""Tracへのコネクションテスト"""
+		response = self.callrpc({ 'params': '', 'method': 'system.getAPIVersion' })
+		print response
+		print json.loads(response)
+		return json.loads(response)['error']
+
+	def get_trac_settings(self):
+		"""Tracプロジェクトの設定を返す"""
+		return {
+			'loading_at': self.loading_at.strftime('%Y/%m/%d %H:%M:%S'),
+			'host': self.host,
+			'port': self.port,
+			'project_name': self.project_name,
+			'team_name': self.team_name,
+			'auth': self.auth,
+			'milestones': self.milestones,
+			'components': self.components,
+			'members': self.members
+		}
