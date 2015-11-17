@@ -9,7 +9,6 @@ git add .
 git commit -m "update apidoc"
 
 echo "FETCH GITHUB REPOSITORY"
-echo "GHTOKEN= ${GH_TOKEN} ="
 git remote add origin https://${GH_TOKEN}@github.com/kaakaa/trac-team-task-register.git
 git fetch origin
 
@@ -24,4 +23,4 @@ git add .
 git commit -m "update apidoc"
 
 echo "PUSH"
-git push --force --quite origin gh-pages > /dev/null 2>&1
+git push --force --quiet origin gh-pages > /dev/null 2>&1
