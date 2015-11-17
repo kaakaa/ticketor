@@ -228,6 +228,11 @@ def regist():
 	except urllib2.URLError, e:
 		return HTTPResponse(status=e.code, body='The server couldn\'t fulfill the request. %s' % e.msg)
 
+@route('/settings')
+@view('settings')
+def settings():
+	return {}
+	
 ## Initialize Phase
 
 def convert_keys_to_string(dictionary):

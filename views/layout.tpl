@@ -4,6 +4,7 @@
   <title>TracTicketor</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/jquery-ui.min.css">
   <link rel="stylesheet" href="/css/jquery-ui.structure.min.css">
   <link rel="stylesheet" href="/css/jquery-ui.theme.min.css">
@@ -14,7 +15,7 @@
 <body>
   <div class="container">
     <!-- Static navbar -->
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -31,6 +32,7 @@
             <li id='nav-update'><a href="/update">Update Task</a></li>
             <li id='nav-burndown'><a href="/burndown">Burndown</a></li>
             <li id='nav-archives'><a href="/archives">Archives</a></li>
+            <li id='nav-settings'><a href="/settings">Settings</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Trac<span class="caret"></span></a>
               <ul class="dropdown-menu">
