@@ -73,23 +73,28 @@
 </div>
 
 <script type="text/javascript">
+  var alertSuccess = function(text){
+    $('#resultText').text(text);
+    $('#result').removeClass('alert-danger');
+    $('#result').addClass('alert-success');
+    $('#result').addClass('in');
+  };
+  var alertFail = function(text) {
+    $('#resultText').text(text);
+    $('#result').removeClass('alert-success');
+    $('#result').addClass('alert-danger');
+    $('#result').addClass('in');
+  };
   $(function(){
     $("#servertest").click(function() {
       $.ajax({
         type: 'get',
         url: '/servertest',
         success: function(data){
-          $('#resultText').text('Connection is success.');
-          $('#result').removeClass('alert-danger');
-          $('#result').addClass('alert-success');
-          $('#result').addClass('in');
+          alertSuccess('Connection is success.')
         },
         error: function(data){
-          console.log(data);
-          $('#resultText').text('Connection is failed. ' + data.status + ':' + data.responseText);
-          $('#result').removeClass('alert-success');
-          $('#result').addClass('alert-danger');
-          $('#result').addClass('in');
+          alertFail('Connection is failed. ' + data.status + ':' + data.responseText);
         }
       });
     });
@@ -102,10 +107,7 @@
           location.reload();
         },
         error: function(data){
-          $('#resultText').text('Reload is failed...')
-          $('#result').removeClass('alert-success');
-          $('#result').addClass('alert-danger');
-          $('#result').addClass('in');
+          alertFail('Reload is failed...')
         }
       });
     });
