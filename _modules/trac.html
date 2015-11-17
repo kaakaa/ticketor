@@ -202,8 +202,6 @@
 <div class="viewcode-block" id="Trac.connection_test"><a class="viewcode-back" href="../trac.html#trac.Trac.connection_test">[docs]</a>	<span class="k">def</span> <span class="nf">connection_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Tracへのコネクションテスト&quot;&quot;&quot;</span>
 		<span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callrpc</span><span class="p">({</span> <span class="s">&#39;params&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;method&#39;</span><span class="p">:</span> <span class="s">&#39;system.getAPIVersion&#39;</span> <span class="p">})</span>
-		<span class="k">print</span> <span class="n">response</span>
-		<span class="k">print</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)[</span><span class="s">&#39;error&#39;</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Trac.get_trac_settings"><a class="viewcode-back" href="../trac.html#trac.Trac.get_trac_settings">[docs]</a>	<span class="k">def</span> <span class="nf">get_trac_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
