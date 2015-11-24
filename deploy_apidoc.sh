@@ -9,7 +9,7 @@ git add .
 git commit -m "update apidoc"
 
 echo "FETCH GITHUB REPOSITORY"
-git remote add origin https://${GH_TOKEN}@github.com/kaakaa/trac-team-task-register.git
+git remote add origin https://${GH_TOKEN}@github.com/kaakaa/ticketor.git
 git fetch origin
 
 echo "CHECKOUT GH-PAGES BRANCH"

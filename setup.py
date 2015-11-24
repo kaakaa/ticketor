@@ -12,7 +12,7 @@ install_reqs = parse_requirements('./requirements.txt', session=False)
 reqs = [str(ir.req) for ir in install_reqs]
 long_description = open('README.md', 'r').read().decode('utf-8')
 
-name = 'trac-team-task-register'
+name = 'ticketor'
 version = '0.1'
 
 setup(
